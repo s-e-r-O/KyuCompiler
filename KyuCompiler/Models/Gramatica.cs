@@ -24,10 +24,9 @@ namespace KyuCompiler.Models
                     if (!NoTerminales.Contains(p.Cabeza)) {
                         NoTerminales.Add(p.Cabeza);
                     }
-                    string[] palabras = Regex.Split(p.Cuerpo, @"[ \t]+");
-                    foreach (string palabra in palabras)
+                    foreach (string palabra in p.Palabras)
                     {
-                        if ((palabra.Length > 1 || (palabra.Length > 0 && !char.IsUpper(palabra[0]))) && !Terminales.Contains(palabra))
+                        if (Produccion.PuedeSerTerminal(palabra) && !Terminales.Contains(palabra))
                         {
                             Terminales.Add(palabra);
                         }

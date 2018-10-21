@@ -1,0 +1,19 @@
+kyu#
+{
+    function factorial a is
+        f is 1
+        forever
+            given a <= 1
+                stop
+            done
+            change f,a
+                * f,a
+                - a,1
+            changed
+        done
+        return f
+    done
+
+    a is 7
+    factorial a
+}

@@ -27,7 +27,7 @@ namespace KyuCompiler
         public bool EsPalabraReservada(string cadena)
         {
 
-            string patron = @"^change$|^changed$|^given$|^otherwise$|^done$|^return$|^forevery$|^forever$|^done$|^in$|^stop$|^kyu#$|^is$";
+            string patron = @"^change$|^changed$|^given$|^otherwise$|^done$|^return$|^forevery$|^forever$|^done$|^in$|^stop$|^kyu#$|^is$|^function$";
             Match match = Regex.Match(cadena, patron);
             return match.Success;
         }

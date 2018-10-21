@@ -6,6 +6,7 @@ namespace KyuCompiler.Models
 {
     class Produccion
     {
+        public static readonly string EPSILON = "\\e"; 
         public char Cabeza { get; set; }
         public string Cuerpo { get; set; }
 

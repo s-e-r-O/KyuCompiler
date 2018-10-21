@@ -103,7 +103,7 @@ namespace KyuCompiler
             {
                 //no borrar estas 2 líneas por favor, son para evitar excepciones
                 caracteres = new string[codigo[i].Length + 1];
-                caracteres[codigo[i].Length] = "";
+                caracteres[codigo[i].Length] = "\n";
 
                 //no quitar el -1
                 for (int j = 0; j < caracteres.Length - 1; j++)
@@ -111,15 +111,9 @@ namespace KyuCompiler
                     caracteres[j] = codigo[i].Substring(j, 1);
                 }
 
-                if (!aux.Equals("") && !aux.Equals(" "))
-                {
-                    auxTokens.Add(new Token(aux, i, 0));
-                    aux = "";
-                }
-
                 //no quitar el -1
                 for (int j = 0; j < caracteres.Length - 1; j++)
-                {
+                { 
                     if (!caracteres[j].Equals(" ") && !caracteres[j].Equals("\t") && !EsSimbolo(caracteres[j]))
                     {
                         aux += caracteres[j];
@@ -158,35 +152,46 @@ namespace KyuCompiler
                         }
                         aux = "";
                     }
-                    else if (EsSimbolo(caracteres[j]))
+                    else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
                     {
-                        if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
-                        {
-                            if (!EsSimboloA(caracteres[j]))
-                            {
+                         if (!EsSimboloA(caracteres[j]))
+                         {
                                 auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i, j));
                                 j++;
-                            }
-                            else
-                            {
+                         }
+                         else
+                         {
                                 auxTokens.Add(new Token(caracteres[j], i, j));
-                            }
-                            aux = "";
-                        }
+                         }
+                         aux = "";
                     }
                     else if (EsSimbolo(caracteres[j]))
                     {
-                        auxTokens.Add(new Token(aux, i, j));
+                        if (!aux.Equals(""))
+                        {
+                            auxTokens.Add(new Token(aux, i, j));
+                        }
                         auxTokens.Add(new Token(caracteres[j], i, j));
                         aux = "";
-                    }
+                    }/*
+                    if(j >= caracteres.Length - 2 && caracteres[j + 1].Equals("\n"))
+                    {
+                        auxTokens.Add(new Token("\n", i, j + 1));
+                    }*/
                 }
 
-                if (i == codigo.Length - 1 && !aux.Equals(" ") && !aux.Equals(""))
+                if (!aux.Equals("") && !aux.Equals(" "))
+                {
+                    auxTokens.Add(new Token(aux, i, 0));
+                    aux = "";
+                }
+
+                auxTokens.Add(new Token("\n", i, caracteres.Length));
+
+                if (i >= codigo.Length - 1 && !aux.Equals(" ") && !aux.Equals(""))
                 {
                     auxTokens.Add(new Token(aux, i, codigo.Length - 1));
                 }
-
             }
 
             tokens = new Token[auxTokens.Count];
@@ -228,6 +233,10 @@ namespace KyuCompiler
                 else if (tokens[i].lexema.Equals(","))
                 {
                     tokens[i].token = "Separador";
+                }
+                else if (tokens[i].lexema.Equals("\n"))
+                {
+                    tokens[i].token = "Salto de línea";
                 }
                 else if (EsIdentificador(tokens[i].lexema))
                 {

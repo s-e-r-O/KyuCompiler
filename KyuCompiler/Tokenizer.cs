@@ -158,25 +158,25 @@ namespace KyuCompiler
                         }
                         aux = "";
                     }
-                    else if (EsSimbolo(caracteres[j]))
+                    else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
                     {
-                        if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
-                        {
-                            if (!EsSimboloA(caracteres[j]))
-                            {
+                         if (!EsSimboloA(caracteres[j]))
+                         {
                                 auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i, j));
                                 j++;
-                            }
-                            else
-                            {
+                         }
+                         else
+                         {
                                 auxTokens.Add(new Token(caracteres[j], i, j));
-                            }
-                            aux = "";
-                        }
+                         }
+                         aux = "";
                     }
                     else if (EsSimbolo(caracteres[j]))
                     {
-                        auxTokens.Add(new Token(aux, i, j));
+                        if (!aux.Equals(""))
+                        {
+                            auxTokens.Add(new Token(aux, i, j));
+                        }
                         auxTokens.Add(new Token(caracteres[j], i, j));
                         aux = "";
                     }

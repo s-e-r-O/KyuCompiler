@@ -9,6 +9,8 @@ namespace KyuCompiler
     class Parser
     {
         Dictionary<char, List<string>> Primeros { get; set; }
+        Dictionary<char, List<string>> Siguientes { get; set; }
+        Dictionary<char, Dictionary<string, Produccion>> Tabla { get; set; }
         Gramatica gramatica;
         
         public void Calcular(Gramatica g)
@@ -27,6 +29,7 @@ namespace KyuCompiler
                 }
                 Console.WriteLine();
             }
+            fillTable();
         }
 
         public List<string> P(string s)
@@ -69,6 +72,47 @@ namespace KyuCompiler
                 Primeros.TryAdd(nt, primeros);
             }
             return primeros;
+        }
+
+        public void fillTable()
+        {
+            gramatica.NoTerminales.ForEach(nt => Tabla.Add(nt, new Dictionary<string, string>));
+            foreach (Produccion p in gramatica.Produccciones)
+            {
+                bool usarSiguientes = true;
+                foreach (string palabra in p.Palabras)
+                {
+                    if(gramatica.EsTerminal(palabra))
+                    {
+                        if (!Tabla[p.Cabeza].ContainsKey(palabra))
+                        {
+                            Tabla[p.Cabeza].Add(palabra, p);
+                            usarSiguientes = false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        List<string> primeros = Primeros[p.Cabeza].Where(x => !x.Equals(Produccion.EPSILON)).ToList();
+                        foreach (string primero in primeros)
+                        {
+                            Tabla[p.Cabeza].Add(primero, p);
+                        }
+                        if (!Primeros[p.Cabeza].Contains(Produccion.EPSILON))
+                        {
+                            usarSiguientes = false;
+                            break;
+                        }
+                    }
+                }
+                if (usarSiguientes)
+                {
+                    foreach(string siguiente in Siguientes[p.Cabeza])
+                    {
+                        Tabla[p.Cabeza].Add(siguiente, p);
+                    }
+                }
+            }
         }
     }
 }

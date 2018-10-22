@@ -1,4 +1,5 @@
-﻿using KyuCompiler.Models;
+﻿using KyuCompiler.Exceptions;
+using KyuCompiler.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -257,6 +258,7 @@ namespace KyuCompiler
                 {
                     tokens[i].token = Token.TokenType.NULL;
                     tokens[i].descripcion = "No definido";
+                    throw new KyuInvalidTokenException(tokens[i]);
                 }
             }
             return tokens;

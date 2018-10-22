@@ -8,7 +8,7 @@ namespace KyuCompiler
 {
     class Parser
     {
-        public static readonly string DOLAR = "$";
+        public static readonly string DOLAR = "\\$";
 
         public Gramatica Gramatica { get; private set; }
         public Dictionary<char, List<string>> Primeros { get; private set; }
@@ -54,7 +54,7 @@ namespace KyuCompiler
             topProduction = productionsStack.Pop();
             topWord = wordStack.Pop();
 
-            while (!topProduction.Equals("$") && !topWord.value().Equals("$"))
+            while (!topProduction.Equals(DOLAR) && !topWord.value().Equals(DOLAR))
             {
                 found = false;
                 if (Gramatica.EsTerminal(topProduction))
@@ -88,7 +88,6 @@ namespace KyuCompiler
                         return false;
                     }
                 }
-                //Console.WriteLine("La punta de produccion es " + topProduction + " La punta de los tokens es: " + topWord.value());
                 if (found)
                 {
                     topWord = wordStack.Pop();

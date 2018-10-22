@@ -20,7 +20,7 @@ namespace KyuCompiler
             Gramatica = g;
             Primeros = new Dictionary<char, List<string>>();
             Siguientes = new Dictionary<char, List<string>>();
-
+            Tabla = new Dictionary<char, Dictionary<string, Produccion>>();
             foreach (char nt in Gramatica.NoTerminales)
             {
                 P(nt.ToString());
@@ -116,26 +116,26 @@ namespace KyuCompiler
 
         public void fillTable()
         {
-            gramatica.NoTerminales.ForEach(nt => Tabla.Add(nt, new Dictionary<string, Produccion>()));
-            foreach (Produccion p in gramatica.Produccciones)
+            Gramatica.NoTerminales.ForEach(nt => Tabla.Add(nt, new Dictionary<string, Produccion>()));
+            foreach (Produccion p in Gramatica.Produccciones)
             {
                 bool usarSiguientes = true;
                 foreach (string palabra in p.Palabras)
                 {
-                    if(gramatica.EsTerminal(palabra))
+                    if(Gramatica.EsTerminal(palabra))
                     {
                         Tabla[p.Cabeza].TryAdd(palabra, p);
                         usarSiguientes = false;
                         break;
                     }
-                    else
+                    else if (palabra != Produccion.EPSILON)
                     {
-                        List<string> primeros = Primeros[p.Cabeza].Where(x => !x.Equals(Produccion.EPSILON)).ToList();
+                        List<string> primeros = Primeros[palabra[0]].Where(x => !x.Equals(Produccion.EPSILON)).ToList();
                         foreach (string primero in primeros)
                         {
                             Tabla[p.Cabeza].TryAdd(primero, p);
                         }
-                        if (!Primeros[p.Cabeza].Contains(Produccion.EPSILON))
+                        if (!Primeros[palabra[0]].Contains(Produccion.EPSILON))
                         {
                             usarSiguientes = false;
                             break;
@@ -144,6 +144,7 @@ namespace KyuCompiler
                 }
                 if (usarSiguientes)
                 {
+                    Console.WriteLine(p.Cabeza + " " + p.Cuerpo);
                     foreach(string siguiente in Siguientes[p.Cabeza])
                     {
                         Tabla[p.Cabeza].TryAdd(siguiente, p);

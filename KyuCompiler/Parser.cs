@@ -76,7 +76,7 @@ namespace KyuCompiler
 
         public void fillTable()
         {
-            gramatica.NoTerminales.ForEach(nt => Tabla.Add(nt, new Dictionary<string, string>));
+            gramatica.NoTerminales.ForEach(nt => Tabla.Add(nt, new Dictionary<string, Produccion>()));
             foreach (Produccion p in gramatica.Produccciones)
             {
                 bool usarSiguientes = true;
@@ -84,19 +84,16 @@ namespace KyuCompiler
                 {
                     if(gramatica.EsTerminal(palabra))
                     {
-                        if (!Tabla[p.Cabeza].ContainsKey(palabra))
-                        {
-                            Tabla[p.Cabeza].Add(palabra, p);
-                            usarSiguientes = false;
-                            break;
-                        }
+                        Tabla[p.Cabeza].TryAdd(palabra, p);
+                        usarSiguientes = false;
+                        break;
                     }
                     else
                     {
                         List<string> primeros = Primeros[p.Cabeza].Where(x => !x.Equals(Produccion.EPSILON)).ToList();
                         foreach (string primero in primeros)
                         {
-                            Tabla[p.Cabeza].Add(primero, p);
+                            Tabla[p.Cabeza].TryAdd(primero, p);
                         }
                         if (!Primeros[p.Cabeza].Contains(Produccion.EPSILON))
                         {
@@ -109,7 +106,7 @@ namespace KyuCompiler
                 {
                     foreach(string siguiente in Siguientes[p.Cabeza])
                     {
-                        Tabla[p.Cabeza].Add(siguiente, p);
+                        Tabla[p.Cabeza].TryAdd(siguiente, p);
                     }
                 }
             }

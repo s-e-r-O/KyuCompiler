@@ -144,7 +144,6 @@ namespace KyuCompiler
                 }
                 if (usarSiguientes)
                 {
-                    Console.WriteLine(p.Cabeza + " " + p.Cuerpo);
                     foreach(string siguiente in Siguientes[p.Cabeza])
                     {
                         Tabla[p.Cabeza].TryAdd(siguiente, p);

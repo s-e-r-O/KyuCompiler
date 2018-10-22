@@ -19,7 +19,7 @@ namespace KyuCompiler
                                 KyuValues.Gramatica.NoTerminales.Count, 
                                 KyuValues.Gramatica.Terminales.Count);
             Parser p = new Parser();
-            p.Calcular(KyuValues.Gramatica);
+            p.CalcularLL1(KyuValues.Gramatica);
             Console.ReadKey();
         }
     }

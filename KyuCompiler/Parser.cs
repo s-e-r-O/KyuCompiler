@@ -8,41 +8,22 @@ namespace KyuCompiler
 {
     class Parser
     {
-        Dictionary<char, List<string>> Primeros { get; set; }
-        Dictionary<char, List<string>> Siguientes { get; set; }
-        Gramatica Gramatica { get; set; }
+        public static readonly string DOLAR = "$";
+
+        public Dictionary<char, List<string>> Primeros { get; private set; }
+        public Dictionary<char, List<string>> Siguientes { get; private set; }
+        public Gramatica Gramatica { get; private set; }
         
-        public void Calcular(Gramatica g)
+        public void CalcularLL1(Gramatica g)
         {
             Gramatica = g;
             Primeros = new Dictionary<char, List<string>>();
             Siguientes = new Dictionary<char, List<string>>();
-            foreach (Produccion p in Gramatica.Produccciones)
-            {
-                P(p.Cabeza.ToString());
-            }
-            foreach (Produccion p in Gramatica.Produccciones)
-            {
-                S(p.Cabeza.ToString());
-            }
-            foreach (KeyValuePair<char, List<string>> p in Primeros)
-            {
-                Console.Write(p.Key + ": ");
-                foreach (string s in p.Value)
-                {
-                    Console.Write("\"{0}\", ", s);
-                }
-                Console.WriteLine();
-            }
 
-            foreach (KeyValuePair<char, List<string>> p in Siguientes)
+            foreach (char nt in Gramatica.NoTerminales)
             {
-                Console.Write(p.Key + ": ");
-                foreach (string s in p.Value)
-                {
-                    Console.Write("\"{0}\", ", s);
-                }
-                Console.WriteLine();
+                P(nt.ToString());
+                S(nt.ToString(), true);
             }
         }
 
@@ -88,7 +69,7 @@ namespace KyuCompiler
             return primeros;
         }
 
-        private List<string> S(string s)
+        private List<string> S(string s, bool final)
         {
             List<string> siguientes = new List<string>();
             char nt = s[0];
@@ -96,9 +77,13 @@ namespace KyuCompiler
             {
                 return siguientesD;
             }
+            else if (!final)
+            {
+                return siguientes;
+            }
             if (Gramatica.Produccciones.ElementAt(0).Cabeza == nt)
             {
-                siguientes.Add("$");
+                siguientes.Add(DOLAR);
             }
             List<Produccion> producciones = Gramatica.Produccciones.Where(p => p.Palabras.Contains(s)).ToList();
 
@@ -108,15 +93,17 @@ namespace KyuCompiler
                 while (index < p.Palabras.Length)
                 {
                     List<string> primerosA = P(p.Palabras[index]);
+                    siguientes.AddRange(primerosA);
                     if (!primerosA.Contains(Produccion.EPSILON))
                     {
                         break;
                     }
+                    siguientes.Remove(Produccion.EPSILON);
                     index++;
                 }
                 if (index >= p.Palabras.Length)
                 {
-                    siguientes.AddRange(S(p.Cabeza.ToString()));
+                    siguientes.AddRange(S(p.Cabeza.ToString(), false));
                 }
             }
 

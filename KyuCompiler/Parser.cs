@@ -1,4 +1,5 @@
-﻿using KyuCompiler.Models;
+﻿using KyuCompiler.Exceptions;
+using KyuCompiler.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace KyuCompiler
             LlenarTabla();
         }
 
-        public bool Evaluar(List<Token> input)
+        public void Evaluar(List<Token> input) 
         {
             Stack<string> productionsStack = new Stack<string>();
             Stack<Token> wordStack = new Stack<Token>();
@@ -61,8 +62,7 @@ namespace KyuCompiler
                 {
                     if (!topProduction.Equals(topWord.value()))
                     {
-                        Console.WriteLine("Syntax Error at line: " + topWord.linea + " and column: " + topWord.columna);
-                        return false;
+                        throw new KyuSyntaxException(topWord);
                     }
                     else
                     {
@@ -82,10 +82,9 @@ namespace KyuCompiler
                         }
 
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        Console.WriteLine("Syntax Error at line: " + topWord.linea + " and column: " + topWord.columna);
-                        return false;
+                        throw new KyuSyntaxException(topWord);
                     }
                 }
                 if (found)
@@ -94,9 +93,11 @@ namespace KyuCompiler
                 }
                 topProduction = productionsStack.Pop();
             }
+        }
 
-            Console.WriteLine("Compilation finished successfully");
-            return true;
+        private Exception KyuSyntaxException()
+        {
+            throw new NotImplementedException();
         }
 
         private List<string> P(string s)

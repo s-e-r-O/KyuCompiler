@@ -20,6 +20,14 @@ namespace KyuCompiler
                                 KyuValues.Gramatica.Terminales.Count);
             Parser p = new Parser();
             p.CalcularLL1(KyuValues.Gramatica);
+           
+            foreach(Token token in tokens)
+            {
+                Console.WriteLine(token.descripcion);
+            }
+
+            // validator = new Validator();
+            //validator.validate(tokens,p.Tabla);
             Console.ReadKey();
         }
     }

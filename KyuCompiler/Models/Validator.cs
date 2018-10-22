@@ -32,6 +32,7 @@ namespace KyuCompiler.Models
 
             while (!topProduction.Equals("$") && !topWord.value().Equals("$"))
             {
+                found = false;
                 if (this.gram.EsTerminal(topProduction))
                 {
                     if (!topProduction.Equals(topWord.value()))
@@ -49,7 +50,11 @@ namespace KyuCompiler.Models
                     try
                     {
                         production = table[topProduction[0]][topWord.value()];
-                        this.addToProductionStack(production);
+                        if(!production.Cuerpo.Equals(Produccion.EPSILON))
+                        {
+                            this.addToProductionStack(production);
+                        }
+                        
                     }
                     catch (Exception ex)
                     {
@@ -57,13 +62,15 @@ namespace KyuCompiler.Models
                         return false;
                     }
                 }
+                //Console.WriteLine("La punta de produccion es " + topProduction + " La punta de los tokens es: " + topWord.value());
                 if(found)
                 {
                     topWord = this.wordStack.Pop();
                 }
                 topProduction = this.productionsStack.Pop();
             }
-            
+
+            Console.WriteLine("Compilation finished successfully");
             return true;
         }
 

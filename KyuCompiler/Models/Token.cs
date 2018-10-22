@@ -16,9 +16,9 @@ namespace KyuCompiler.Models
             COMPARATOR,
             IDENTIFIER,
             PARSER,
+            DOLLAR,
             NULL
         }
-
         public TokenType token { get; set; }//describe si es palabra reservada u otro
         public string lexema { get; set; }//lo que es
         public int linea { get; set; }
@@ -60,7 +60,8 @@ namespace KyuCompiler.Models
 
         public string value()
         {
-            switch (token) {
+            switch (token)
+            {
                 case TokenType.IDENTIFIER:
                     return "i";
                 case TokenType.VALUE:
@@ -71,6 +72,8 @@ namespace KyuCompiler.Models
                     return "z";
                 case TokenType.COMPARATOR:
                     return "x";
+                case TokenType.DOLLAR:
+                    return "$";
             }
             return lexema;
         }

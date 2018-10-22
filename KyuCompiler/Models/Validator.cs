@@ -9,53 +9,60 @@ namespace KyuCompiler.Models
     class Validator
     {
         Stack<string> productionsStack = new Stack<string>();
-        //Stack<string> wordStack = new Stack<string>();
+        Stack<Token> wordStack = new Stack<Token>();
         string initialSymbol = KyuValues.Gramatica.Produccciones[0].Cabeza.ToString();
         Gramatica gram = KyuValues.Gramatica;
-
-
         public Validator()
         {
-            productionsStack.Push("$");
+            this.productionsStack.Push("$");
+            Token dolar = new Token(Token.TokenType.DOLLAR, "$",-1,-1);
+            this.wordStack.Push(dolar);
         }
 
-        public bool validate(List<Token> input, Dictionary<char, Dictionary<string, Produccion>> table)
+        public bool validate(List<Token> tokenList, Dictionary<char, Dictionary<string, Produccion>> table)
         {
             string topProduction;
+            Token topWord;
             Produccion production;
-            Stack<Token> tokenStack = new Stack<Token>();
-            tokenStack.Push(new Token(Token.TokenType.PARSER, Parser.DOLAR, 0, 0));
-            input.Reverse();
-            input.ToList().ForEach(t => tokenStack.Push(t));
-            //this.init(input, this.initialSymbol);
-            string topWord;
-            do
-            {
-                topProduction = this.productionsStack.Pop();
-                topWord = tokenStack.Pop().value();
+            bool found = false; ;
 
+            this.init(tokenList, this.initialSymbol);
+            topProduction = this.productionsStack.Pop();
+            topWord = this.wordStack.Pop();
+
+            while (!topProduction.Equals("$") && !topWord.value().Equals("$"))
+            {
                 if (this.gram.EsTerminal(topProduction))
                 {
-                    if (!topProduction.Equals(topWord))
+                    if (!topProduction.Equals(topWord.value()))
                     {
-                        Console.WriteLine("Syntax Error near: " + topWord);
+                        Console.WriteLine("Syntax Error at line: " + topWord.linea + " and column: " + topWord.columna);
                         return false;
+                    } 
+                    else
+                    {
+                        found = true;
                     }
                 }
                 else
                 {
                     try
                     {
-                        production = table[topProduction[0]][topWord];
+                        production = table[topProduction[0]][topWord.value()];
                         this.addToProductionStack(production);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Syntax Error near: " + topWord);
+                        Console.WriteLine("Syntax Error at line: " + topWord.linea + " and column: " + topWord.columna);
                         return false;
                     }
                 }
-            } while (!topProduction.Equals("$") && !topWord.Equals("$"));
+                if(found)
+                {
+                    topWord = this.wordStack.Pop();
+                }
+                topProduction = this.productionsStack.Pop();
+            }
             
             return true;
         }
@@ -68,6 +75,15 @@ namespace KyuCompiler.Models
                 this.productionsStack.Push(splitedBody[i]);
             }
         }
- 
+        private void init(List<Token> tokenList, string initialSymbol)
+        {
+
+            tokenList.Reverse();
+            foreach(Token t in tokenList)
+            {
+                this.wordStack.Push(t);
+            }
+            this.productionsStack.Push(initialSymbol);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using KyuCompiler.Utils;
 
@@ -31,7 +32,6 @@ namespace KyuCompiler.Models
 
             while (!topProduction.Equals("$") && !topWord.value().Equals("$"))
             {
-                
                 if (this.gram.EsTerminal(topProduction))
                 {
                     if (!topProduction.Equals(topWord.value()))
@@ -75,7 +75,6 @@ namespace KyuCompiler.Models
                 this.productionsStack.Push(splitedBody[i]);
             }
         }
-
         private void init(List<Token> tokenList, string initialSymbol)
         {
 
@@ -86,6 +85,5 @@ namespace KyuCompiler.Models
             }
             this.productionsStack.Push(initialSymbol);
         }
- 
     }
 }

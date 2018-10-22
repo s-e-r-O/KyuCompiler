@@ -130,12 +130,12 @@ namespace KyuCompiler
                     }
                     else if (palabra != Produccion.EPSILON)
                     {
-                        List<string> primeros = Primeros[palabra[0]].Where(x => !x.Equals(Produccion.EPSILON)).ToList();
+                        List<string> primeros = P(palabra).Where(x => !x.Equals(Produccion.EPSILON)).ToList();
                         foreach (string primero in primeros)
                         {
                             Tabla[p.Cabeza].TryAdd(primero, p);
                         }
-                        if (!Primeros[palabra[0]].Contains(Produccion.EPSILON))
+                        if (!P(palabra).Contains(Produccion.EPSILON))
                         {
                             usarSiguientes = false;
                             break;
@@ -144,7 +144,7 @@ namespace KyuCompiler
                 }
                 if (usarSiguientes)
                 {
-                    foreach(string siguiente in Siguientes[p.Cabeza])
+                    foreach(string siguiente in S(p.Cabeza.ToString(), true))
                     {
                         Tabla[p.Cabeza].TryAdd(siguiente, p);
                     }

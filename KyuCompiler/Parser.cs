@@ -10,10 +10,10 @@ namespace KyuCompiler
     {
         public static readonly string DOLAR = "$";
 
+        public Gramatica Gramatica { get; private set; }
         public Dictionary<char, List<string>> Primeros { get; private set; }
         public Dictionary<char, List<string>> Siguientes { get; private set; }
         public Dictionary<char, Dictionary<string, Produccion>> Tabla { get; set; }
-        public Gramatica Gramatica { get; private set; }
 
         public void CalcularLL1(Gramatica g)
         {
@@ -24,9 +24,80 @@ namespace KyuCompiler
             foreach (char nt in Gramatica.NoTerminales)
             {
                 P(nt.ToString());
-                S(nt.ToString(), true);
+                S(nt.ToString());
             }
-            fillTable();
+            LlenarTabla();
+        }
+
+        public bool Evaluar(List<Token> input)
+        {
+            Stack<string> productionsStack = new Stack<string>();
+            Stack<Token> wordStack = new Stack<Token>();
+
+            productionsStack.Push(DOLAR);
+            productionsStack.Push(Gramatica.Produccciones[0].Cabeza.ToString());
+
+            wordStack.Push(new Token(Token.TokenType.PARSER, DOLAR, 0, 0));
+
+            input.Reverse();
+            foreach (Token t in input)
+            {
+                wordStack.Push(t);
+            }
+            input.Reverse();
+
+            string topProduction;
+            Token topWord;
+            Produccion production;
+            bool found = false;
+            
+            topProduction = productionsStack.Pop();
+            topWord = wordStack.Pop();
+
+            while (!topProduction.Equals("$") && !topWord.value().Equals("$"))
+            {
+                found = false;
+                if (Gramatica.EsTerminal(topProduction))
+                {
+                    if (!topProduction.Equals(topWord.value()))
+                    {
+                        Console.WriteLine("Syntax Error at line: " + topWord.linea + " and column: " + topWord.columna);
+                        return false;
+                    }
+                    else
+                    {
+                        found = true;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        production = Tabla[topProduction[0]][topWord.value()];
+                        if (!production.Cuerpo.Equals(Produccion.EPSILON))
+                        {
+                            List<string> listaDePalbaras = production.Palabras.ToList();
+                            listaDePalbaras.Reverse();
+                            listaDePalbaras.ForEach(s => productionsStack.Push(s));
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Syntax Error at line: " + topWord.linea + " and column: " + topWord.columna);
+                        return false;
+                    }
+                }
+                //Console.WriteLine("La punta de produccion es " + topProduction + " La punta de los tokens es: " + topWord.value());
+                if (found)
+                {
+                    topWord = wordStack.Pop();
+                }
+                topProduction = productionsStack.Pop();
+            }
+
+            Console.WriteLine("Compilation finished successfully");
+            return true;
         }
 
         private List<string> P(string s)
@@ -71,17 +142,13 @@ namespace KyuCompiler
             return primeros;
         }
 
-        private List<string> S(string s, bool final)
+        private List<string> S(string s)
         {
             List<string> siguientes = new List<string>();
             char nt = s[0];
             if (Siguientes.TryGetValue(nt, out List<string> siguientesD))
             {
                 return siguientesD;
-            }
-            else if (!final)
-            {
-                return siguientes;
             }
             if (Gramatica.Produccciones.ElementAt(0).Cabeza == nt)
             {
@@ -103,9 +170,9 @@ namespace KyuCompiler
                     siguientes.Remove(Produccion.EPSILON);
                     index++;
                 }
-                if (index >= p.Palabras.Length)
+                if (index >= p.Palabras.Length && Siguientes.TryGetValue(p.Cabeza, out List<string> siguientesA))
                 {
-                    siguientes.AddRange(S(p.Cabeza.ToString(), false));
+                    siguientes.AddRange(siguientesA);
                 }
             }
 
@@ -114,7 +181,7 @@ namespace KyuCompiler
             return siguientes;
         }
 
-        public void fillTable()
+        private void LlenarTabla()
         {
             Gramatica.NoTerminales.ForEach(nt => Tabla.Add(nt, new Dictionary<string, Produccion>()));
             foreach (Produccion p in Gramatica.Produccciones)
@@ -144,12 +211,14 @@ namespace KyuCompiler
                 }
                 if (usarSiguientes)
                 {
-                    foreach(string siguiente in S(p.Cabeza.ToString(), true))
+                    foreach(string siguiente in S(p.Cabeza.ToString()))
                     {
                         Tabla[p.Cabeza].TryAdd(siguiente, p);
                     }
                 }
             }
         }
+
+
     }
 }

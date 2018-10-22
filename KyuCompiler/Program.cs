@@ -16,8 +16,7 @@ namespace KyuCompiler
             List<Token> tokens = t.Analizar(file).ToList();
             Parser p = new Parser();
             p.CalcularLL1(KyuValues.Gramatica);
-            Validator v = new Validator();
-            v.validate(tokens, p.Tabla);
+            p.Evaluar(tokens);
             Console.ReadKey();
         }
     }

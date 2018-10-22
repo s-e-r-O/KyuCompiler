@@ -204,47 +204,59 @@ namespace KyuCompiler
             {
                 if (EsCadena(tokens[i].lexema))
                 {
-                    tokens[i].token = "Cadena";
+
+                    tokens[i].token = Token.TokenType.VALUE;
+                    tokens[i].descripcion = "Cadena";
                 }
                 else if (EsPalabraReservada(tokens[i].lexema))
                 {
-                    tokens[i].token = "Palabra Reservada";
+                    tokens[i].token = Token.TokenType.KEYWORD;
+                    tokens[i].descripcion = "Palabra Reservada";
                 }
                 else if (EsSimboloA(tokens[i].lexema))
                 {
-                    tokens[i].token = "Agrupación";
+                    tokens[i].token = Token.TokenType.SEPARATOR;
+                    tokens[i].descripcion = "Agrupación";
                 }
                 else if (EsNumero(tokens[i].lexema))
                 {
-                    tokens[i].token = "Número";
+                    tokens[i].token = Token.TokenType.VALUE;
+                    tokens[i].descripcion = "Número";
                 }
                 else if (EsOperadorA(tokens[i].lexema))
                 {
-                    tokens[i].token = "Operador Aritmético";
+                    tokens[i].token = Token.TokenType.ARITH_OPERATOR;
+                    tokens[i].descripcion = "Operador Aritmético";
                 }
                 else if (EsOperadorL(tokens[i].lexema))
                 {
-                    tokens[i].token = "Operador Lógico";
+                    tokens[i].token = Token.TokenType.BOOLEAN_OPERATOR;
+                    tokens[i].descripcion = "Operador Lógico";
                 }
                 else if (EsComparador(tokens[i].lexema))
                 {
-                    tokens[i].token = "Comparador";
+                    tokens[i].token = Token.TokenType.COMPARATOR;
+                    tokens[i].descripcion = "Comparador";
                 }
                 else if (tokens[i].lexema.Equals(","))
                 {
-                    tokens[i].token = "Separador";
+                    tokens[i].token = Token.TokenType.SEPARATOR;
+                    tokens[i].descripcion = "Separador";
                 }
                 else if (tokens[i].lexema.Equals("\n"))
                 {
-                    tokens[i].token = "Salto de línea";
+                    tokens[i].token = Token.TokenType.SEPARATOR;
+                    tokens[i].descripcion = "Salto de línea";
                 }
                 else if (EsIdentificador(tokens[i].lexema))
                 {
-                    tokens[i].token = "Identificador";
+                    tokens[i].token = Token.TokenType.IDENTIFIER;
+                    tokens[i].descripcion = "Identificador";
                 }
                 else
                 {
-                    tokens[i].token = "No definido";
+                    tokens[i].token = Token.TokenType.NULL;
+                    tokens[i].descripcion = "No definido";
                 }
             }
             return tokens;

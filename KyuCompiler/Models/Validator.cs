@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using KyuCompiler.Utils;
 
@@ -8,29 +9,30 @@ namespace KyuCompiler.Models
     class Validator
     {
         Stack<string> productionsStack = new Stack<string>();
-        Stack<string> wordStack = new Stack<string>();
+        //Stack<string> wordStack = new Stack<string>();
         string initialSymbol = KyuValues.Gramatica.Produccciones[0].Cabeza.ToString();
-        Gramatica gram = new Gramatica();
+        Gramatica gram = KyuValues.Gramatica;
 
 
         public Validator()
         {
             productionsStack.Push("$");
-            wordStack.Push("$");
         }
 
-        public bool validate(string input, Dictionary<char, Dictionary<string, Produccion>> table)
+        public bool validate(List<Token> input, Dictionary<char, Dictionary<string, Produccion>> table)
         {
             string topProduction;
-            string topWord;
             Produccion production;
-
-            this.init(input, this.initialSymbol);
-
+            Stack<Token> tokenStack = new Stack<Token>();
+            tokenStack.Push(new Token(Token.TokenType.PARSER, Parser.DOLAR, 0, 0));
+            input.Reverse();
+            input.ToList().ForEach(t => tokenStack.Push(t));
+            //this.init(input, this.initialSymbol);
+            string topWord;
             do
             {
                 topProduction = this.productionsStack.Pop();
-                topWord = this.wordStack.Pop();
+                topWord = tokenStack.Pop().value();
 
                 if (this.gram.EsTerminal(topProduction))
                 {
@@ -65,16 +67,6 @@ namespace KyuCompiler.Models
             {
                 this.productionsStack.Push(splitedBody[i]);
             }
-        }
-
-        private void init(string input, string initialSymbol)
-        {
-            string[] noSpaceInput = input.Split(' ');
-            for(int i=noSpaceInput.Length-1; i>=0;i--)
-            {
-                this.wordStack.Push(noSpaceInput[i]);
-            }
-            this.productionsStack.Push(initialSymbol);
         }
  
     }

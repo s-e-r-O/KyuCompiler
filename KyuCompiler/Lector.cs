@@ -23,10 +23,10 @@ namespace KyuCompiler
                     if (linea != null)
                     {
                         linea = linea.Trim();
+                        linea = linea.Split(';')[0];
                         if (linea != "")
                         {
                             //linea = Regex.Replace(linea, @"\s+", " ");
-                            linea = linea.Split(';')[0];
                             lineas.Add(linea);
                         }
                     }

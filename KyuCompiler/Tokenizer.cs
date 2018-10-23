@@ -174,11 +174,7 @@ namespace KyuCompiler
                         }
                         auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
                         aux = "";
-                    }/*
-                    if(j >= caracteres.Length - 2 && caracteres[j + 1].Equals("\n"))
-                    {
-                        auxTokens.Add(new Token("\n", i, j + 1));
-                    }*/
+                    }
                 }
 
                 if (!aux.Equals("") && !aux.Equals(" "))

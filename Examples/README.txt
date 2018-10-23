@@ -1,0 +1,1 @@
+copiar esta carpeta en KyuCompiler\bin\Debug\netcoreapp2.0

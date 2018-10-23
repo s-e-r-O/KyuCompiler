@@ -17,7 +17,7 @@ namespace KyuCompiler
         public bool EsIdentificador(string cadena)
         {
 
-            string patron = "^[^\\d].*$";
+            string patron = "^[a-zA-Z_].*$";
 
             Match match = Regex.Match(cadena, patron);
 
@@ -122,33 +122,33 @@ namespace KyuCompiler
                     {
                         aux = caracteres[j];
                         j++;
-                        while (!EsComilla(caracteres[j]))
+                        while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
                         {
                             aux += caracteres[j];
                             j++;
                         }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i, j));
+                        auxTokens.Add(new Token(aux, i, j - aux.Length + 1));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
                     {
                         aux = caracteres[j];
                         j++;
-                        while ((!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")) && j < caracteres.Length - 1)
+                        while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
                         {
                             aux += caracteres[j];
                             j++;
                         }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i, j));
+                        auxTokens.Add(new Token(aux, i, j - aux.Length + 1));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
                     {
                         if (!aux.Equals(""))
                         {
-                            auxTokens.Add(new Token(aux, i, j));
+                            auxTokens.Add(new Token(aux, i, j - aux.Length + 1));
                         }
                         aux = "";
                     }

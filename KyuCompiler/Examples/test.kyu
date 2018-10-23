@@ -1,7 +1,7 @@
 kyu#
 {
     function factorial a is
-        f is 1
+        f is "sdsd
         forever
             given a <= 1
                 stop

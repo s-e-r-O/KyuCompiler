@@ -25,7 +25,7 @@ namespace KyuCompiler
                         linea = linea.Trim();
                         if (linea != "")
                         {
-                            linea = Regex.Replace(linea, @"\s+", " ");
+                            //linea = Regex.Replace(linea, @"\s+", " ");
                             linea = linea.Split(';')[0];
                             lineas.Add(linea);
                         }

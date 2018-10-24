@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyuCompilerF", "KyuCompilerF\KyuCompilerF.csproj", "{8C360C97-9F87-476C-B49F-1B8D649BF1D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerUI", "CompilerUI\CompilerUI\CompilerUI.csproj", "{82FEC253-25B0-4F3A-87F1-77EAC600C681}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerUI", "CompilerUI\CompilerUI.csproj", "{82FEC253-25B0-4F3A-87F1-77EAC600C681}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8C360C97-9F87-476C-B49F-1B8D649BF1D6} = {8C360C97-9F87-476C-B49F-1B8D649BF1D6}
 	EndProjectSection

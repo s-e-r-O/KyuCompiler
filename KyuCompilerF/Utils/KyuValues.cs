@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KyuCompilerF.Utils
 {
-    class KyuValues
+    public class KyuValues
     {
         private static Gramatica gramatica;
         public static Gramatica Gramatica

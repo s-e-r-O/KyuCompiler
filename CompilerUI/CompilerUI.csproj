@@ -87,7 +87,7 @@
     <None Include="Resources\stop.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\KyuCompilerF\KyuCompilerF\KyuCompilerF.csproj">
+    <ProjectReference Include="..\KyuCompilerF\KyuCompilerF.csproj">
       <Project>{8c360c97-9f87-476c-b49f-1b8d649bf1d6}</Project>
       <Name>KyuCompilerF</Name>
     </ProjectReference>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KyuCompilerF
 {
-    class Tokenizer
+    public class Tokenizer
     {
         public Token[] Analizar(string[] codigo)
         {

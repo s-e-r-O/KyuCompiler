@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 
 namespace KyuCompilerF
 {
-    class Lector
-    {
-        public string[] Leer(string filePath)
+    public class Lector { 
+
+        private string _filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+
+        public string[] Leer(string filePath, bool relativeToSource)
         {
             string[] codigo;
             List<string> lineas = new List<string>();
+            string actualFilePath = relativeToSource ? _filePath + "/" + filePath : filePath;
             StreamReader reader;
             try
             {
-                reader = new StreamReader(filePath);
+                reader = new StreamReader(actualFilePath);
                 string linea = "";
                 while (linea != null)
                 {

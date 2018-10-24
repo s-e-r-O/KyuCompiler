@@ -1,6 +1,6 @@
 ﻿kyu#
 {
-    function factorial 1 is
+    function factorial a is
         f is 1
         forever
             given a <= 1

@@ -15,7 +15,7 @@ namespace KyuCompilerF
             Lector l = new Lector();
             try
             {
-                string[] file = l.Leer("Examples/test.kyu");
+                string[] file = l.Leer("Examples/test.kyu", true);
                 Tokenizer t = new Tokenizer();
                 List<Token> tokens = t.Analizar(file).ToList();
                 Parser p = new Parser();

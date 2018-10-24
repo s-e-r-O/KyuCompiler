@@ -1,9 +1,11 @@
-﻿using KyuCompiler.Models;
+﻿using KyuCompilerF.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace KyuCompiler.Exceptions
+namespace KyuCompilerF.Exceptions
 {
     class KyuInvalidTokenException : ApplicationException
     {

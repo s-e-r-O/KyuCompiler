@@ -1,16 +1,21 @@
-﻿using KyuCompiler.Models;
+﻿using KyuCompilerF.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace KyuCompiler.Utils
+namespace KyuCompilerF.Utils
 {
     class KyuValues
     {
         private static Gramatica gramatica;
-        public static Gramatica Gramatica {
-            get {
-                if (gramatica == null) {
+        public static Gramatica Gramatica
+        {
+            get
+            {
+                if (gramatica == null)
+                {
                     gramatica = new Gramatica()
                     {
                         Produccciones = new List<Produccion>
@@ -62,6 +67,6 @@ namespace KyuCompiler.Utils
                 }
                 return gramatica;
             }
-        } 
+        }
     }
 }

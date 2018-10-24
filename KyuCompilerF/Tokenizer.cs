@@ -1,17 +1,20 @@
-﻿using KyuCompiler.Exceptions;
-using KyuCompiler.Models;
+﻿using KyuCompilerF.Exceptions;
+using KyuCompilerF.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace KyuCompiler
+namespace KyuCompilerF
 {
     class Tokenizer
     {
         public Token[] Analizar(string[] codigo)
         {
             Token[] tokens = this.Reconocer(codigo);
-            
+
             return tokens;
         }
 
@@ -114,7 +117,7 @@ namespace KyuCompiler
 
                 //no quitar el -1
                 for (int j = 0; j < caracteres.Length - 1; j++)
-                { 
+                {
                     if (!caracteres[j].Equals(" ") && !caracteres[j].Equals("\t") && !EsSimbolo(caracteres[j]))
                     {
                         aux += caracteres[j];
@@ -155,16 +158,16 @@ namespace KyuCompiler
                     }
                     else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
                     {
-                         if (!EsSimboloA(caracteres[j]))
-                         {
-                                auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
-                                j++;
-                         }
-                         else
-                         {
-                                auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
-                         }
-                         aux = "";
+                        if (!EsSimboloA(caracteres[j]))
+                        {
+                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
+                            j++;
+                        }
+                        else
+                        {
+                            auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                        }
+                        aux = "";
                     }
                     else if (EsSimbolo(caracteres[j]))
                     {
@@ -174,7 +177,11 @@ namespace KyuCompiler
                         }
                         auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
                         aux = "";
-                    }
+                    }/*
+                    if(j >= caracteres.Length - 2 && caracteres[j + 1].Equals("\n"))
+                    {
+                        auxTokens.Add(new Token("\n", i, j + 1));
+                    }*/
                 }
 
                 if (!aux.Equals("") && !aux.Equals(" "))

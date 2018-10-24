@@ -1,9 +1,11 @@
-﻿using KyuCompiler.Models;
+﻿using KyuCompilerF.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace KyuCompiler.Exceptions
+namespace KyuCompilerF.Exceptions
 {
     class KyuSyntaxException : ApplicationException
     {
@@ -16,7 +18,8 @@ namespace KyuCompiler.Exceptions
         public override string ToString()
         {
             string type = token.token.ToString().ToLower();
-            if (type.Length > 1) {
+            if (type.Length > 1)
+            {
                 type = type[0].ToString().ToUpper() + type.Substring(1);
             }
             return String.Format("Kyu {0}SyntaxException: \"{1}\" in ({2},{3})", type, token.lexema, token.linea, token.columna);

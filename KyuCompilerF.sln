@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KyuCompilerF", "KyuCompilerF\KyuCompilerF.csproj", "{8C360C97-9F87-476C-B49F-1B8D649BF1D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerUI", "..\KyuCompiler\CompilerUI\CompilerUI\CompilerUI.csproj", "{82FEC253-25B0-4F3A-87F1-77EAC600C681}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C360C97-9F87-476C-B49F-1B8D649BF1D6} = {8C360C97-9F87-476C-B49F-1B8D649BF1D6}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C360C97-9F87-476C-B49F-1B8D649BF1D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C360C97-9F87-476C-B49F-1B8D649BF1D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C360C97-9F87-476C-B49F-1B8D649BF1D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C360C97-9F87-476C-B49F-1B8D649BF1D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82FEC253-25B0-4F3A-87F1-77EAC600C681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82FEC253-25B0-4F3A-87F1-77EAC600C681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82FEC253-25B0-4F3A-87F1-77EAC600C681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82FEC253-25B0-4F3A-87F1-77EAC600C681}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {657EEBC0-9A48-44B7-8498-0F4AF53661C8}
+	EndGlobalSection
+EndGlobal

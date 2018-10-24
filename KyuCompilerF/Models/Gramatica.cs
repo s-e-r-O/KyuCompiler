@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace KyuCompiler.Models
+namespace KyuCompilerF.Models
 {
-    class Gramatica
+    public class Gramatica
     {
         private List<Produccion> producciones;
-        public List<Produccion> Produccciones {
+        public List<Produccion> Produccciones
+        {
             get
             {
                 return producciones;
@@ -21,7 +22,8 @@ namespace KyuCompiler.Models
                 Terminales = new List<string>();
                 foreach (Produccion p in producciones)
                 {
-                    if (!NoTerminales.Contains(p.Cabeza)) {
+                    if (!NoTerminales.Contains(p.Cabeza))
+                    {
                         NoTerminales.Add(p.Cabeza);
                     }
                     foreach (string palabra in p.Palabras)
@@ -38,7 +40,8 @@ namespace KyuCompiler.Models
         public List<char> NoTerminales { get; private set; }
         public List<string> Terminales { get; private set; }
 
-        public bool EsTerminal(string s) {
+        public bool EsTerminal(string s)
+        {
             return Terminales.Contains(s);
         }
 

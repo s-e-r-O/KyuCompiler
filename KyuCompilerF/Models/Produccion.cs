@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace KyuCompiler.Models
+namespace KyuCompilerF.Models
 {
-    class Produccion
+    public class Produccion
     {
         public static readonly string EPSILON = "\\e";
 
-        public static bool PuedeSerTerminal(string s) {
+        public static bool PuedeSerTerminal(string s)
+        {
             return (s.Length > 1 || (s.Length > 0 && !char.IsUpper(s[0])));
         }
 
@@ -17,9 +20,11 @@ namespace KyuCompiler.Models
 
         public char Cabeza { get; set; }
         private string cuerpo;
-        public string Cuerpo {
+        public string Cuerpo
+        {
             get { return cuerpo; }
-            set {
+            set
+            {
                 cuerpo = value;
                 Palabras = Regex.Split(cuerpo, @"[ \t]+");
             }

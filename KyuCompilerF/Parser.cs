@@ -1,13 +1,14 @@
-﻿using KyuCompiler.Exceptions;
-using KyuCompiler.Models;
+﻿using KyuCompilerF.Exceptions;
+using KyuCompilerF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace KyuCompiler
+namespace KyuCompilerF
 {
-    class Parser
+    public class Parser
     {
         public static readonly string DOLAR = "\\$";
 
@@ -30,7 +31,7 @@ namespace KyuCompiler
             LlenarTabla();
         }
 
-        public void Evaluar(List<Token> input) 
+        public void Evaluar(List<Token> input)
         {
             Stack<string> productionsStack = new Stack<string>();
             Stack<Token> wordStack = new Stack<Token>();
@@ -51,7 +52,7 @@ namespace KyuCompiler
             Token topWord;
             Produccion production;
             bool found = false;
-            
+
             topProduction = productionsStack.Pop();
             topWord = wordStack.Pop();
 
@@ -95,11 +96,6 @@ namespace KyuCompiler
             }
         }
 
-        private Exception KyuSyntaxException()
-        {
-            throw new NotImplementedException();
-        }
-
         private List<string> P(string s)
         {
             List<string> primeros = new List<string>();
@@ -108,7 +104,7 @@ namespace KyuCompiler
                 primeros.Add(s);
                 return primeros;
             }
-            
+
             char nt = s[0];
             if (Primeros.TryGetValue(nt, out List<string> primerosD))
             {
@@ -133,12 +129,16 @@ namespace KyuCompiler
                     }
                     n--;
                 }
-                if (n <= 0) {
+                if (n <= 0)
+                {
                     primeros.Add(Produccion.EPSILON);
                 }
             }
             primeros = primeros.Distinct().ToList();
-            Primeros.TryAdd(nt, primeros);
+            if (!Primeros.ContainsKey(nt))
+            {
+                Primeros.Add(nt, primeros);
+            }
             return primeros;
         }
 
@@ -156,7 +156,7 @@ namespace KyuCompiler
             }
             List<Produccion> producciones = Gramatica.Produccciones.Where(p => p.Palabras.Contains(s)).ToList();
 
-            foreach(Produccion p in producciones)
+            foreach (Produccion p in producciones)
             {
                 int index = p.Palabras.ToList().FindIndex(w => w == s) + 1;
                 while (index < p.Palabras.Length)
@@ -177,7 +177,10 @@ namespace KyuCompiler
             }
 
             siguientes = siguientes.Distinct().ToList();
-            Siguientes.TryAdd(nt, siguientes);
+            if (!Siguientes.ContainsKey(nt))
+            {
+                Siguientes.Add(nt, siguientes);
+            }
             return siguientes;
         }
 
@@ -189,9 +192,13 @@ namespace KyuCompiler
                 bool usarSiguientes = true;
                 foreach (string palabra in p.Palabras)
                 {
-                    if(Gramatica.EsTerminal(palabra))
+                    if (Gramatica.EsTerminal(palabra))
                     {
-                        Tabla[p.Cabeza].TryAdd(palabra, p);
+                        if (!Tabla[p.Cabeza].ContainsKey(palabra))
+                        {
+                            Tabla[p.Cabeza].Add(palabra, p);
+                        }
+                        
                         usarSiguientes = false;
                         break;
                     }
@@ -200,7 +207,11 @@ namespace KyuCompiler
                         List<string> primeros = P(palabra).Where(x => !x.Equals(Produccion.EPSILON)).ToList();
                         foreach (string primero in primeros)
                         {
-                            Tabla[p.Cabeza].TryAdd(primero, p);
+                            if (!Tabla[p.Cabeza].ContainsKey(primero))
+                            {
+                                Tabla[p.Cabeza].Add(primero, p);
+                            }
+                            
                         }
                         if (!P(palabra).Contains(Produccion.EPSILON))
                         {
@@ -211,14 +222,15 @@ namespace KyuCompiler
                 }
                 if (usarSiguientes)
                 {
-                    foreach(string siguiente in S(p.Cabeza.ToString()))
+                    foreach (string siguiente in S(p.Cabeza.ToString()))
                     {
-                        Tabla[p.Cabeza].TryAdd(siguiente, p);
+                        if (!Tabla[p.Cabeza].ContainsKey(siguiente))
+                        {
+                            Tabla[p.Cabeza].Add(siguiente, p);
+                        }
                     }
                 }
             }
         }
-
-
     }
 }

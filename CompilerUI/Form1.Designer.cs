@@ -31,20 +31,21 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moreInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exceptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.codeExampleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TextEditorTextBox = new System.Windows.Forms.RichTextBox();
             this.LineNumberTextBox = new System.Windows.Forms.RichTextBox();
             this.StopButton = new System.Windows.Forms.Button();
             this.PlayButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.OutputLabel = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ErrorLabel = new System.Windows.Forms.Label();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moreInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exceptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.codeExampleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -66,7 +67,8 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFileToolStripMenuItem,
-            this.saveAsToolStripMenuItem});
+            this.saveAsToolStripMenuItem,
+            this.saveToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -74,9 +76,47 @@
             // openFileToolStripMenuItem
             // 
             this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openFileToolStripMenuItem.Text = "Open File";
             this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.moreInfoToolStripMenuItem,
+            this.exceptionsToolStripMenuItem,
+            this.codeExampleToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // moreInfoToolStripMenuItem
+            // 
+            this.moreInfoToolStripMenuItem.Name = "moreInfoToolStripMenuItem";
+            this.moreInfoToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.moreInfoToolStripMenuItem.Text = "Documentation";
+            this.moreInfoToolStripMenuItem.Click += new System.EventHandler(this.moreInfoToolStripMenuItem_Click);
+            // 
+            // exceptionsToolStripMenuItem
+            // 
+            this.exceptionsToolStripMenuItem.Name = "exceptionsToolStripMenuItem";
+            this.exceptionsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.exceptionsToolStripMenuItem.Text = "Exceptions";
+            this.exceptionsToolStripMenuItem.Click += new System.EventHandler(this.exceptionsToolStripMenuItem_Click);
+            // 
+            // codeExampleToolStripMenuItem
+            // 
+            this.codeExampleToolStripMenuItem.Name = "codeExampleToolStripMenuItem";
+            this.codeExampleToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.codeExampleToolStripMenuItem.Text = "Code Example";
+            this.codeExampleToolStripMenuItem.Click += new System.EventHandler(this.codeExampleToolStripMenuItem_Click);
             // 
             // TextEditorTextBox
             // 
@@ -153,6 +193,15 @@
             this.tabPage1.Text = "Output";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // OutputLabel
+            // 
+            this.OutputLabel.AutoSize = true;
+            this.OutputLabel.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OutputLabel.Location = new System.Drawing.Point(10, 11);
+            this.OutputLabel.Name = "OutputLabel";
+            this.OutputLabel.Size = new System.Drawing.Size(0, 12);
+            this.OutputLabel.TabIndex = 0;
+            // 
             // tabPage2
             // 
             this.tabPage2.AutoScroll = true;
@@ -165,59 +214,21 @@
             this.tabPage2.Text = "Error List";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // OutputLabel
-            // 
-            this.OutputLabel.AutoSize = true;
-            this.OutputLabel.Location = new System.Drawing.Point(10, 11);
-            this.OutputLabel.Name = "OutputLabel";
-            this.OutputLabel.Size = new System.Drawing.Size(0, 13);
-            this.OutputLabel.TabIndex = 0;
-            // 
             // ErrorLabel
             // 
             this.ErrorLabel.AutoSize = true;
+            this.ErrorLabel.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ErrorLabel.Location = new System.Drawing.Point(9, 10);
             this.ErrorLabel.Name = "ErrorLabel";
-            this.ErrorLabel.Size = new System.Drawing.Size(0, 13);
+            this.ErrorLabel.Size = new System.Drawing.Size(0, 12);
             this.ErrorLabel.TabIndex = 0;
             // 
-            // saveAsToolStripMenuItem
+            // saveToolStripMenuItem
             // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.moreInfoToolStripMenuItem,
-            this.exceptionsToolStripMenuItem,
-            this.codeExampleToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // moreInfoToolStripMenuItem
-            // 
-            this.moreInfoToolStripMenuItem.Name = "moreInfoToolStripMenuItem";
-            this.moreInfoToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.moreInfoToolStripMenuItem.Text = "Documentation";
-            this.moreInfoToolStripMenuItem.Click += new System.EventHandler(this.moreInfoToolStripMenuItem_Click);
-            // 
-            // exceptionsToolStripMenuItem
-            // 
-            this.exceptionsToolStripMenuItem.Name = "exceptionsToolStripMenuItem";
-            this.exceptionsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.exceptionsToolStripMenuItem.Text = "Exceptions";
-            this.exceptionsToolStripMenuItem.Click += new System.EventHandler(this.exceptionsToolStripMenuItem_Click);
-            // 
-            // codeExampleToolStripMenuItem
-            // 
-            this.codeExampleToolStripMenuItem.Name = "codeExampleToolStripMenuItem";
-            this.codeExampleToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.codeExampleToolStripMenuItem.Text = "Code Example";
-            this.codeExampleToolStripMenuItem.Click += new System.EventHandler(this.codeExampleToolStripMenuItem_Click);
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -266,6 +277,7 @@
         private System.Windows.Forms.ToolStripMenuItem moreInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exceptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem codeExampleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
     }
 }
 

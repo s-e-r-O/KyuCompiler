@@ -42,6 +42,9 @@ namespace KyuCompilerF
                 {
                     codigo[i] = lineas[i];
                 }
+
+                reader.Close();
+                
             }
             catch (Exception e)
             {

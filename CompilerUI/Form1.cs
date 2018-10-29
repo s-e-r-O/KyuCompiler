@@ -1,4 +1,7 @@
-﻿using System;
+﻿using KyuCompilerF;
+using KyuCompilerF.Models;
+using KyuCompilerF.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +17,10 @@ namespace CompilerUI
 {
     public partial class Form1 : Form
     {
+        int countSaving = 0;
+        string pathSelectedFile = "";
+        string fileName = "";
+
         public Form1()
         {
             InitializeComponent();
@@ -30,13 +37,12 @@ namespace CompilerUI
 
         private void openFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string pathSelectedFile = "";
-
             OpenFileDialog ofd = new OpenFileDialog();
 
             if (ofd.ShowDialog(this) == DialogResult.OK)
             {
-                pathSelectedFile = ofd.InitialDirectory + ofd.FileName;
+                fileName = ofd.FileName;
+                pathSelectedFile = ofd.InitialDirectory + fileName;
             }
 
             string contentOfFile = File.ReadAllText(pathSelectedFile);
@@ -105,6 +111,11 @@ namespace CompilerUI
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            saveFile();
+        }
+
+        private void saveFile()
+        {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
             saveFileDialog1.Filter = "Kyu# File|*.kyu";
             saveFileDialog1.Title = "Save a kyu# file";
@@ -112,11 +123,13 @@ namespace CompilerUI
 
             if (saveFileDialog1.FileName != "")
             {
+                pathSelectedFile = saveFileDialog1.FileName;
                 System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile();
 
                 byte[] data = new UTF8Encoding(true).GetBytes(TextEditorTextBox.Text);
-                fs.Write(data, 0, TextEditorTextBox.Text.Length);  
+                fs.Write(data, 0, TextEditorTextBox.Text.Length);
                 fs.Close();
+                countSaving = countSaving + 1;
             }
         }
 
@@ -140,6 +153,35 @@ namespace CompilerUI
             StopButton.Visible = true;
             TextEditorTextBox.Enabled = false;
             PlayButton.Enabled = false;
+
+            if (countSaving == 0)
+            {
+                saveFile();
+            }
+            else
+            {
+                string text = TextEditorTextBox.Text;
+                System.IO.File.WriteAllText(pathSelectedFile, text);
+            }
+
+            Lector l = new Lector();
+            try
+            {
+                string[] file = l.Leer(pathSelectedFile, false);
+                Tokenizer t = new Tokenizer();
+                List<Token> tokens = t.Analizar(file).ToList();
+                Parser p = new Parser();
+                p.CalcularLL1(KyuValues.Gramatica);
+                p.Evaluar(tokens);
+                OutputLabel.Text = "Compiled Successfully!";
+            }
+            catch (Exception excep)
+            {
+                tabPage2.Text = "(1) Error List";
+                OutputLabel.Text = "Couldn't compile successfully.\nError thrown at " + pathSelectedFile + "\n";
+                ErrorLabel.ForeColor = Color.Red;
+                ErrorLabel.Text = excep.ToString();
+            }
         }
 
         private void StopButton_Click(object sender, EventArgs e)
@@ -149,6 +191,20 @@ namespace CompilerUI
             TextEditorTextBox.Enabled = true;
             OutputLabel.Text = "";
             ErrorLabel.Text = "";
+            tabPage2.Text = "Error List";
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (countSaving == 0)
+            {
+                saveFile();
+            }
+            else
+            {
+                string text = TextEditorTextBox.Text;
+                System.IO.File.WriteAllText(pathSelectedFile, text);
+            }
         }
     }
 }

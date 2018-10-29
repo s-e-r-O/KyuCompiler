@@ -198,6 +198,13 @@ namespace KyuCompilerF
                         {
                             Tabla[p.Cabeza].Add(palabra, p);
                         }
+                        else
+                        {
+                            if (Tabla[p.Cabeza][palabra] != p)
+                            {
+                                throw new KyuGrammarException(p, palabra);
+                            }
+                        }
                         
                         usarSiguientes = false;
                         break;
@@ -211,7 +218,14 @@ namespace KyuCompilerF
                             {
                                 Tabla[p.Cabeza].Add(primero, p);
                             }
-                            
+                            else
+                            {
+                                if (Tabla[p.Cabeza][palabra] != p)
+                                {
+                                    throw new KyuGrammarException(p, palabra);
+                                }
+                            }
+
                         }
                         if (!P(palabra).Contains(Produccion.EPSILON))
                         {
@@ -227,6 +241,13 @@ namespace KyuCompilerF
                         if (!Tabla[p.Cabeza].ContainsKey(siguiente))
                         {
                             Tabla[p.Cabeza].Add(siguiente, p);
+                        }
+                        else
+                        {
+                            if (Tabla[p.Cabeza][siguiente] != p)
+                            {
+                                throw new KyuGrammarException(p, siguiente);
+                            }
                         }
                     }
                 }

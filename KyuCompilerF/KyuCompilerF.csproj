@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\KyuGrammarException.cs" />
     <Compile Include="Exceptions\KyuInvalidTokenException.cs" />
     <Compile Include="Exceptions\KyuSyntaxException.cs" />
     <Compile Include="Lector.cs" />

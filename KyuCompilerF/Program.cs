@@ -20,7 +20,7 @@ namespace KyuCompilerF
                 List<Token> tokens = t.Analizar(file).ToList();
                 Parser p = new Parser();
                 p.CalcularLL1(KyuValues.Gramatica);
-                p.Evaluar(tokens);
+                Nodo raiz = p.Evaluar(tokens);
                 Console.WriteLine("All good!");
             }
             catch (Exception e)

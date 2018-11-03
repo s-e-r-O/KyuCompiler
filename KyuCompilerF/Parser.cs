@@ -31,13 +31,15 @@ namespace KyuCompilerF
             LlenarTabla();
         }
 
-        public void Evaluar(List<Token> input)
+        public Nodo Evaluar(List<Token> input)
         {
-            Stack<string> productionsStack = new Stack<string>();
+            Stack<Nodo> productionsStack = new Stack<Nodo>();
             Stack<Token> wordStack = new Stack<Token>();
 
-            productionsStack.Push(DOLAR);
-            productionsStack.Push(Gramatica.Produccciones[0].Cabeza.ToString());
+            Nodo raiz = new Nodo(Gramatica.Produccciones[0].Cabeza.ToString());
+            
+            productionsStack.Push(new Nodo(DOLAR));
+            productionsStack.Push(raiz);
 
             wordStack.Push(new Token(Token.TokenType.PARSER, DOLAR, 0, 0));
 
@@ -48,25 +50,26 @@ namespace KyuCompilerF
             }
             input.Reverse();
 
-            string topProduction;
+            Nodo topProduction;
             Token topWord;
             Produccion production;
             bool found = false;
 
             topProduction = productionsStack.Pop();
             topWord = wordStack.Pop();
-
-            while (!topProduction.Equals(DOLAR) && !topWord.value().Equals(DOLAR))
+            
+            while (!topProduction.Contenido.Equals(DOLAR) && !topWord.value().Equals(DOLAR))
             {
                 found = false;
-                if (Gramatica.EsTerminal(topProduction))
+                if (Gramatica.EsTerminal(topProduction.Contenido))
                 {
-                    if (!topProduction.Equals(topWord.value()))
+                    if (!topProduction.Contenido.Equals(topWord.value()))
                     {
                         throw new KyuSyntaxException(topWord);
                     }
                     else
                     {
+                        //topProduction.Symbol = topWord.simbolo;
                         found = true;
                     }
                 }
@@ -74,12 +77,23 @@ namespace KyuCompilerF
                 {
                     try
                     {
-                        production = Tabla[topProduction[0]][topWord.value()];
+                        production = Tabla[topProduction.Contenido[0]][topWord.value()];
+                        topProduction.ProduccionUsada = production;
+                        topProduction.Hijos = new List<Nodo>();
                         if (!production.Cuerpo.Equals(Produccion.EPSILON))
                         {
                             List<string> listaDePalbaras = production.Palabras.ToList();
                             listaDePalbaras.Reverse();
-                            listaDePalbaras.ForEach(s => productionsStack.Push(s));
+                            foreach (string palabra in listaDePalbaras)
+                            {
+                                Nodo hijo = new Nodo(palabra);
+                                topProduction.Hijos.Insert(0, hijo);
+                                productionsStack.Push(hijo);
+                            }
+                        }
+                        else
+                        {
+                            topProduction.Hijos.Add(new Nodo(Produccion.EPSILON));
                         }
 
                     }
@@ -94,6 +108,7 @@ namespace KyuCompilerF
                 }
                 topProduction = productionsStack.Pop();
             }
+            return raiz;
         }
 
         private List<string> P(string s)

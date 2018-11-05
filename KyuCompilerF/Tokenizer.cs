@@ -36,6 +36,13 @@ namespace KyuCompilerF
             return match.Success;
         }
 
+        public bool EsBoolean(string cadena)
+        {
+            string patron = "^true$|^false$";
+            Match match = Regex.Match(cadena, patron);
+            return match.Success;
+        }
+
         public bool EsNumero(string cadena)
         {
 
@@ -177,11 +184,7 @@ namespace KyuCompilerF
                         }
                         auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
                         aux = "";
-                    }/*
-                    if(j >= caracteres.Length - 2 && caracteres[j + 1].Equals("\n"))
-                    {
-                        auxTokens.Add(new Token("\n", i, j + 1));
-                    }*/
+                    }
                 }
 
                 if (!aux.Equals("") && !aux.Equals(" "))
@@ -211,6 +214,7 @@ namespace KyuCompilerF
 
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Cadena";
+                    tokens[i].Simbolo = new Simbolo<object>(SimboloTipo.LIST_CHAR, tokens[i].lexema);
                 }
                 else if (EsPalabraReservada(tokens[i].lexema))
                 {
@@ -226,16 +230,20 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Número";
+                    tokens[i].Simbolo = new Simbolo<object>(SimboloTipo.NUMERO, int.Parse(tokens[i].lexema));
+                    Console.WriteLine(tokens[i].Simbolo.ToString());
                 }
                 else if (EsOperadorA(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.ARITH_OPERATOR;
                     tokens[i].descripcion = "Operador Aritmético";
+                    tokens[i].Simbolo = new Simbolo<object>(SimboloTipo.OPERADOR_ARITMETICO, tokens[i].lexema);
                 }
                 else if (EsOperadorL(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.BOOLEAN_OPERATOR;
                     tokens[i].descripcion = "Operador Lógico";
+                    tokens[i].Simbolo = new Simbolo<object>(SimboloTipo.OPERADOR_BOOLEANO, tokens[i].lexema);
                 }
                 else if (EsComparador(tokens[i].lexema))
                 {
@@ -251,6 +259,13 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.SEPARATOR;
                     tokens[i].descripcion = "Salto de línea";
+                }
+                else if (EsBoolean(tokens[i].lexema))
+                {
+                    tokens[i].token = Token.TokenType.VALUE;
+                    tokens[i].descripcion = "Booleano";
+                    tokens[i].Simbolo = new Simbolo<object>(SimboloTipo.BOOLEANO, bool.Parse(tokens[i].lexema));
+                    Console.WriteLine(tokens[i].Simbolo.ToString());
                 }
                 else if (EsIdentificador(tokens[i].lexema))
                 {

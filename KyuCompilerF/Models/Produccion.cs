@@ -19,7 +19,7 @@ namespace KyuCompilerF.Models
         public string[] Palabras { get; private set; }
 
         public char Cabeza { get; set; }
-        public Action<List<Simbolo>> reglaAtributo;
+        public Action<Dictionary<string, List<Simbolo<Object>>>> reglaAtributo;
         private string cuerpo;
         public string Cuerpo
         {
@@ -36,7 +36,8 @@ namespace KyuCompilerF.Models
             this.Cabeza = cabeza;
             this.Cuerpo = cuerpo;
         }
-        public Produccion(char cabeza, string cuerpo,Action<List<Simbolo>> atributoFunc)
+
+        public Produccion(char cabeza, string cuerpo,Action<Dictionary<string, List<Simbolo>>> atributoFunc)
         {
             this.Cabeza = cabeza;
             this.Cuerpo = cuerpo;

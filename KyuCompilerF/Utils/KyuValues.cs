@@ -23,7 +23,7 @@ namespace KyuCompilerF.Utils
                             new Produccion('S', "kyu# \n { \n M }"),
                             new Produccion('M', "I \n J"),
                             new Produccion('J', "M"),
-                            new Produccion('J', Produccion.EPSILON),
+                            new Produccion('J', Produccion.EPSILON, d => d["J"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('I', "D"),
                             new Produccion('I', "H"),
                             new Produccion('I', "G"),
@@ -32,42 +32,92 @@ namespace KyuCompilerF.Utils
                             new Produccion('I', "return E"),
                             new Produccion('D', "i K"),
                             new Produccion('D', "function i P is \n M done"),
-                            new Produccion('K', "is B"),
-                            new Produccion('K', "R"),
-                            new Produccion('B', "E"),
+                            new Produccion('K', "is B", (d) => { d["K"][0].Tipo = d["B"][0].Tipo; d["K"][0].Valor = d["B"][0].Valor; }),
+                            new Produccion('K', "R", (d) => { d["K"][0].Tipo = d["R"][0].Tipo; }),
+                            new Produccion('B', "E", (d) => { d["B"][0].Tipo = d["E"][0].Tipo; d["B"][0].Valor = d["E"][0].Valor; }),
                             new Produccion('B', "[ X ]"),
                             new Produccion('X', "E Z"),
-                            new Produccion('X', Produccion.EPSILON),
+                            new Produccion('X', Produccion.EPSILON, d => d["X"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('Z', ", E Z"),
-                            new Produccion('Z', Produccion.EPSILON),
-                            new Produccion('H', "change A changed"),
+                            new Produccion('Z', Produccion.EPSILON, d => d["Z"][0].Tipo = SimboloTipo.EMPTY),
+                            new Produccion('H', "change A changed", d => d["H"][0].Tipo = d["A"][0].Tipo),
                             new Produccion('A', "i N \n"),
                             new Produccion('N', ", A E"),
                             new Produccion('N', "\n E"),
                             new Produccion('P', "i Q"),
-                            new Produccion('P', Produccion.EPSILON),
+                            new Produccion('P', Produccion.EPSILON, d => d["P"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('Q', ", i Q"),
-                            new Produccion('Q', Produccion.EPSILON),
+                            new Produccion('Q', Produccion.EPSILON, d => d["Q"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('R', "E U"),
-                            new Produccion('R', Produccion.EPSILON),
+                            new Produccion('R', Produccion.EPSILON, d => d["R"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('U', ", E U"),
-                            new Produccion('U', Produccion.EPSILON),
+                            new Produccion('U', Produccion.EPSILON, d => d["U"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('L', "forevery i in i \n M done"),
                             new Produccion('L', "forever \n M done"),
-                            new Produccion('G', "given E \n M V"),
-                            new Produccion('V', "done"),
-                            new Produccion('V', "otherwise \n M done"),
-                            new Produccion('E', "C W"),
-                            new Produccion('W', "b E"),
-                            new Produccion('W', Produccion.EPSILON),
+                            new Produccion('G', "given E \n M V", (d) => {
+                                if (d["E"][0].Tipo != SimboloTipo.BOOLEANO)
+                                {
+                                    d["G"][0].Tipo = SimboloTipo.ERROR;
+                                } else if (d["E"][0].Tipo == SimboloTipo.ERROR || d["M"][0].Tipo == SimboloTipo.ERROR || d["V"][0].Tipo == SimboloTipo.ERROR)
+                                {
+                                    d["G"][0].Tipo = SimboloTipo.ERROR;
+                                }
+                            }),
+                            new Produccion('V', "done", d => d["V"][0].Tipo = SimboloTipo.EMPTY),
+                            new Produccion('V', "otherwise \n M done", d => d["V"][0].Tipo = d["M"][0].Tipo),
+                            new Produccion('E', "C W", (d) => {
+                                if (d["W"][0].Tipo == SimboloTipo.EMPTY)
+                                {
+                                    d["E"][0].Tipo = d["C"][0].Tipo;
+                                    d["E"][0].Valor = d["C"][0].Valor;
+                                } else if (d["C"][0].Tipo == SimboloTipo.BOOLEANO && d["W"][0].Tipo != SimboloTipo.ERROR)
+                                {
+                                    d["E"][0].Tipo = d["C"][0].Tipo;
+                                    switch (d["W"][0].Operador)
+                                    {
+                                        case "&&":
+                                            d["E"][0].Valor = d["C"][0].Valor && d["W"][0].Valor;
+                                            break;
+                                        case "||":
+                                            d["E"][0].Valor = d["C"][0].Valor || d["W"][0].Valor;
+                                            break;
+                                    }
+                                } else
+                                {
+                                    d["E"][0].Tipo = SimboloTipo.ERROR;
+                                }
+                            }),
+                            new Produccion('W', "b E", (d) => {
+                                if (d["E"][0].Tipo != SimboloTipo.BOOLEANO) {
+                                    d["W"][0].Tipo = SimboloTipo.ERROR;
+                                } else
+                                {
+                                    d["W"][0].Tipo = d["E"][0].Tipo;
+                                    d["W"][0].Valor = d["E"][0].Valor;
+                                    d["W"][0].Operador = d["b"][0].Valor;
+                                }
+                            }),
+                            new Produccion('W', Produccion.EPSILON, d => d["W"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('C', "O Y"),
-                            new Produccion('C', "~ ( C )"),
-                            new Produccion('Y', "x O"),
-                            new Produccion('Y', Produccion.EPSILON),
+                            new Produccion('C', "~ ( C )", (d) => {
+                                if (d["C"][1].Tipo != SimboloTipo.BOOLEANO) {
+                                    d["C"][0].Tipo = SimboloTipo.ERROR;
+                                } else
+                                {
+                                    d["C"][0].Valor = !d["C"][1].Valor;
+                                    d["C"][0].Tipo = d["C"][1].Tipo;
+                                }
+                            }),
+                            new Produccion('Y', "x O", (d) => {
+                                d["Y"][0].Tipo = d["O"][0].Tipo;
+                                d["Y"][0].Valor = d["O"][0].Valor;
+                                d["Y"][0].Operador = d["x"][0].Valor;
+                            }),
+                            new Produccion('Y', Produccion.EPSILON, d => d["Y"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('O', "z O , O"),
-                            new Produccion('O', "T"),
+                            new Produccion('O', "T", (d) => { d["O"][0].Tipo = d["T"][0].Tipo; d["O"][0].Valor = d["T"][0].Valor; }),
                             new Produccion('T', "i"),
-                            new Produccion('T', "v")
+                            new Produccion('T', "v", (d) => { d["T"][0].Tipo = d["v"][0].Tipo; d["T"][0].Valor = d["v"][0].Valor; })
                         }
                     };
                 }

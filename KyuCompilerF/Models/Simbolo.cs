@@ -44,5 +44,38 @@ namespace KyuCompilerF.Models
             return "tipo: " + this.Tipo + "valor: " + this.Valor;
         }
 
+        public static bool IsList(SimboloTipo t)
+        {
+            return t == SimboloTipo.LIST_BOOLEANO || t == SimboloTipo.LIST_CHAR || t == SimboloTipo.LIST_NUMERO;
+        }
+
+        public static SimboloTipo ListOf(SimboloTipo t)
+        {
+            switch (t)
+            {
+                case SimboloTipo.NUMERO:
+                    return SimboloTipo.LIST_NUMERO;
+                case SimboloTipo.CHAR:
+                    return SimboloTipo.LIST_CHAR;
+                case SimboloTipo.BOOLEANO:
+                    return SimboloTipo.LIST_BOOLEANO;
+            }
+            return SimboloTipo.ERROR;
+        }
+
+        public static SimboloTipo UnitOf(SimboloTipo t)
+        {
+            switch (t)
+            {
+                case SimboloTipo.LIST_NUMERO:
+                    return SimboloTipo.NUMERO;
+                case SimboloTipo.LIST_CHAR:
+                    return SimboloTipo.CHAR;
+                case SimboloTipo.LIST_BOOLEANO:
+                    return SimboloTipo.BOOLEANO;
+            }
+            return SimboloTipo.ERROR;
+        }
+
     }
 }

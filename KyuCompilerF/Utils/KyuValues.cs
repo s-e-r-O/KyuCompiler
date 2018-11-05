@@ -35,10 +35,24 @@ namespace KyuCompilerF.Utils
                             new Produccion('K', "is B", (d) => { d["K"][0].Tipo = d["B"][0].Tipo; d["K"][0].Valor = d["B"][0].Valor; }),
                             new Produccion('K', "R", (d) => { d["K"][0].Tipo = d["R"][0].Tipo; }),
                             new Produccion('B', "E", (d) => { d["B"][0].Tipo = d["E"][0].Tipo; d["B"][0].Valor = d["E"][0].Valor; }),
-                            new Produccion('B', "[ X ]"),
-                            new Produccion('X', "E Z"),
+                            new Produccion('B', "[ X ]", d => d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo)),
+                            new Produccion('X', "E Z", (d) => {
+                                if (d["E"][0].Tipo != d["Z"][0].Tipo){
+                                    d["X"][0].Tipo = SimboloTipo.ERROR;
+                                } else
+                                {
+                                    d["X"][0].Tipo = d["E"][0].Tipo;
+                                }
+                            }),
                             new Produccion('X', Produccion.EPSILON, d => d["X"][0].Tipo = SimboloTipo.EMPTY),
-                            new Produccion('Z', ", E Z"),
+                            new Produccion('Z', ", E Z", (d) => {
+                                if (d["E"][0].Tipo != d["Z"][1].Tipo){
+                                    d["Z"][0].Tipo = SimboloTipo.ERROR;
+                                } else
+                                {
+                                    d["Z"][0].Tipo = d["E"][0].Tipo;
+                                }
+                            }),
                             new Produccion('Z', Produccion.EPSILON, d => d["Z"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('H', "change A changed", d => d["H"][0].Tipo = d["A"][0].Tipo),
                             new Produccion('A', "i N \n", (d) =>{
@@ -89,7 +103,12 @@ namespace KyuCompilerF.Utils
                             }),
                             new Produccion('U', Produccion.EPSILON, d => d["U"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('L', "forevery i in i \n M done", (d) => {
-                                
+                                if (Simbolo.IsList(d["i"][1].Tipo)){
+                                    d["i"][0].Tipo = Simbolo.UnitOf(d["i"][1].Tipo);
+                                } else
+                                {
+                                    d["i"][0].Tipo = SimboloTipo.ERROR;
+                                }
                             }),
                             new Produccion('L', "forever \n M done", d => d["L"][0].Tipo = d["M"][0].Tipo),
                             new Produccion('G', "given E \n M V", (d) => {
@@ -182,7 +201,62 @@ namespace KyuCompilerF.Utils
                                 d["Y"][0].Operador = (string) d["x"][0].Valor;
                             }),
                             new Produccion('Y', Produccion.EPSILON, d => d["Y"][0].Tipo = SimboloTipo.EMPTY),
-                            new Produccion('O', "z O , O"),
+                            new Produccion('O', "z O , O", (d) => {
+                                if (d["O"][2].Tipo == SimboloTipo.NUMERO && d["O"][1].Tipo == SimboloTipo.NUMERO){
+                                    d["O"][0].Tipo = SimboloTipo.NUMERO;
+                                    switch((string)d["z"][0].Valor){
+                                        case "+":
+                                            d["O"][0].Valor =(float) d["O"][1].Valor + (float) d["O"][2].Valor;
+                                            break;
+                                        case "-":
+                                            d["O"][0].Valor =(float) d["O"][1].Valor - (float) d["O"][2].Valor;
+                                            break;
+                                        case "*":
+                                            d["O"][0].Valor =(float) d["O"][1].Valor * (float) d["O"][2].Valor;
+                                            break;
+                                        case "/":
+                                            d["O"][0].Valor =(float) d["O"][1].Valor / (float) d["O"][2].Valor;
+                                            break;
+                                        case "^":
+                                            d["O"][0].Valor = Math.Pow((float) d["O"][1].Valor,(float) d["O"][2].Valor);
+                                            break;
+                                        case "%":
+                                            d["O"][0].Valor =(int) d["O"][1].Valor % (int) d["O"][2].Valor;
+                                            break;
+                                    }
+                                } else if ((string) d["z"][0].Valor == "+") {
+                                    if (Simbolo.IsList(d["O"][1].Tipo)){
+                                        d["O"][0].Tipo = d["O"][1].Tipo;
+                                        if (Simbolo.IsList(d["O"][2].Tipo)){
+                                            if (d["O"][1].Tipo == d["O"][2].Tipo){
+                                                // Concatenate
+                                            } else {
+                                                d["O"][0].Tipo = SimboloTipo.ERROR;
+                                            }
+                                        } else if (Simbolo.UnitOf(d["O"][1].Tipo) == d["O"][2].Tipo) {
+                                            // Add
+                                        } else {
+                                            d["O"][0].Tipo = SimboloTipo.ERROR;
+                                        }
+                                    } else if (Simbolo.IsList(d["O"][2].Tipo)){
+                                        d["O"][0].Tipo = d["O"][2].Tipo;
+                                        if (Simbolo.IsList(d["O"][1].Tipo)){
+                                            if (d["O"][1].Tipo == d["O"][2].Tipo){
+                                                // Concatenate
+                                            } else {
+                                                d["O"][0].Tipo = SimboloTipo.ERROR;
+                                            }
+                                        } else if (Simbolo.UnitOf(d["O"][2].Tipo) == d["O"][1].Tipo) {
+                                            // Add
+                                        } else {
+                                            d["O"][0].Tipo = SimboloTipo.ERROR;
+                                        }
+                                    }
+                                } else
+                                {
+                                    d["O"][0].Tipo = SimboloTipo.ERROR;
+                                }
+                            }),
                             new Produccion('O', "T", (d) => { d["O"][0].Tipo = d["T"][0].Tipo; d["O"][0].Valor = d["T"][0].Valor; }),
                             new Produccion('T', "i"),
                             new Produccion('T', "v", (d) => { d["T"][0].Tipo = d["v"][0].Tipo; d["T"][0].Valor = d["v"][0].Valor; })

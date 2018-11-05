@@ -50,7 +50,9 @@
     <Compile Include="Lector.cs" />
     <Compile Include="Models\Gramatica.cs" />
     <Compile Include="Models\Produccion.cs" />
+    <Compile Include="Models\Simbolo.cs" />
     <Compile Include="Models\Token.cs" />
+    <Compile Include="Models\Nodo.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

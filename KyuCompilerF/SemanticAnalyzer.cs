@@ -20,7 +20,7 @@ namespace KyuCompilerF
                     foreach (Nodo hijo in nodo.Hijos)
                     {
                         Evaluar(hijo);
-                        if (!simbolosHijos.ContainsKey(nodo.Contenido))
+                        if (!simbolosHijos.ContainsKey(hijo.Contenido))
                         {
                             simbolosHijos.Add(hijo.Contenido, new List<Simbolo>() { hijo.Symbol });
                         }
@@ -29,7 +29,7 @@ namespace KyuCompilerF
                             simbolosHijos[hijo.Contenido].Add(hijo.Symbol);
                         }
                     }
-                    nodo.ProduccionUsada.reglaAtributo(simbolosHijos);
+                    nodo.ProduccionUsada.reglaAtributo?.Invoke(simbolosHijos);
                 }
                 nodo.FueEvaluado = true;
             }

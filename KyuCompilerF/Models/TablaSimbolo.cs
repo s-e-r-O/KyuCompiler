@@ -71,7 +71,7 @@ namespace KyuCompilerF.Models
         {
             if (!IsInTable(id))
             {
-                Simbolos.Add(id, new Simbolo() { Id = id });
+                Simbolos.Add(id, null);
                 return true;
             }
             return false;

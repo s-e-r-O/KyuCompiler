@@ -21,7 +21,7 @@ namespace KyuCompilerF.Utils
                         Produccciones = new List<Produccion>
                         {
                             new Produccion('S', "kyu# \n { \n M }", d => AssignType(d, "S", 0, "M", 0)),
-                            new Produccion('M', "I \n J"),
+                            new Produccion('M', "I \n J", d => AssignType(d, "M", 0, "I", 0)),
                             new Produccion('J', "M", d => AssignType(d, "J", 0, "M", 0)),
                             new Produccion('J', Produccion.EPSILON, d => d["J"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('I', "D", d => AssignType(d, "I", 0, "D", 0)),
@@ -31,16 +31,17 @@ namespace KyuCompilerF.Utils
                             new Produccion('I', "stop", d=> d["I"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('I', "return E", d => AssignType(d, "I", 0, "E", 0)),
                             new Produccion('D', "i K", (d) => {
-                                if (!TablaSimbolo.Tabla.IsInTable(d["i"][0].Id) && !TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
+                                if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
                                 {
                                     Assign(d, "i", 0, "K", 0);
+                                    TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                 } else
                                 {
                                     SetError(d, "D", 0);
                                 }
                             }),
                             new Produccion('D', "function i P is \n M done"),
-                            new Produccion('K', "is B", d => Assign(d, "B", 0, "K", 0)),
+                            new Produccion('K', "is B", d => Assign(d, "K", 0, "B", 0)),
                             new Produccion('K', "R", d => AssignType(d, "K", 0, "R", 0)),
                             new Produccion('B', "E", d => Assign(d, "B", 0, "E", 0)),
                             new Produccion('B', "[ X ]", d => d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo)),

@@ -20,6 +20,8 @@ namespace CompilerUI
         int countSaving = 0;
         string pathSelectedFile = "";
         string fileName = "";
+        string[] keywordsList = new string[] { "change", "changed", "given", "otherwise", "done", "return", "forevery", "forever", "done", "in", "stop", "kyu#", "is", "function" };
+
 
         public Form1()
         {
@@ -99,6 +101,29 @@ namespace CompilerUI
         private void TextEditorTextBox_TextChanged(object sender, EventArgs e)
         {
             AddLineNumeration();
+            highligthKeywords(Color.DarkTurquoise, 0);
+        }
+
+        private void highligthKeywords(Color color, int startIndex)
+        {
+            string word;
+            for (int i = 0; i < keywordsList.Length; i++)
+            {
+                word = keywordsList[i];
+                if (this.TextEditorTextBox.Text.Contains(word))
+                {
+                    int index = -1;
+                    int selectStart = this.TextEditorTextBox.SelectionStart;
+
+                    while ((index = this.TextEditorTextBox.Text.IndexOf(word, (index + 1))) != -1)
+                    {
+                        this.TextEditorTextBox.Select((index + startIndex), word.Length);
+                        this.TextEditorTextBox.SelectionColor = color;
+                        this.TextEditorTextBox.Select(selectStart, 0);
+                        this.TextEditorTextBox.SelectionColor = Color.Black;
+                    }
+                }
+            }
         }
 
         private void TextEditorTextBox_KeyDown(object sender, KeyEventArgs e)

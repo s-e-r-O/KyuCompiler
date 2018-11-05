@@ -36,6 +36,13 @@ namespace KyuCompilerF
             return match.Success;
         }
 
+        public bool EsBoolean(string cadena)
+        {
+            string patron = "^true$|^false$";
+            Match match = Regex.Match(cadena, patron);
+            return match.Success;
+        }
+
         public bool EsNumero(string cadena)
         {
 
@@ -126,33 +133,33 @@ namespace KyuCompilerF
                     {
                         aux = caracteres[j];
                         j++;
-                        while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
+                        while (!EsComilla(caracteres[j]))
                         {
                             aux += caracteres[j];
                             j++;
                         }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                        auxTokens.Add(new Token(aux, i, j));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
                     {
                         aux = caracteres[j];
                         j++;
-                        while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
+                        while ((!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")) && j < caracteres.Length - 1)
                         {
                             aux += caracteres[j];
                             j++;
                         }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                        auxTokens.Add(new Token(aux, i, j));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
                     {
                         if (!aux.Equals(""))
                         {
-                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
+                            auxTokens.Add(new Token(aux, i, j));
                         }
                         aux = "";
                     }
@@ -160,12 +167,12 @@ namespace KyuCompilerF
                     {
                         if (!EsSimboloA(caracteres[j]))
                         {
-                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
+                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i, j));
                             j++;
                         }
                         else
                         {
-                            auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                            auxTokens.Add(new Token(caracteres[j], i, j));
                         }
                         aux = "";
                     }
@@ -175,7 +182,7 @@ namespace KyuCompilerF
                         {
                             auxTokens.Add(new Token(aux, i, j));
                         }
-                        auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                        auxTokens.Add(new Token(caracteres[j], i, j));
                         aux = "";
                     }/*
                     if(j >= caracteres.Length - 2 && caracteres[j + 1].Equals("\n"))
@@ -211,6 +218,7 @@ namespace KyuCompilerF
 
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Cadena";
+                    tokens[i].Simbolo = new Simbolo<object>(Simbolo<object>.SimboloTipo.CADENA, tokens[i].lexema);
                 }
                 else if (EsPalabraReservada(tokens[i].lexema))
                 {
@@ -226,16 +234,20 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Número";
+                    tokens[i].Simbolo = new Simbolo<object>(Simbolo<object>.SimboloTipo.NUMERO, int.Parse(tokens[i].lexema));
+                    Console.WriteLine(tokens[i].Simbolo.ToString());
                 }
                 else if (EsOperadorA(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.ARITH_OPERATOR;
                     tokens[i].descripcion = "Operador Aritmético";
+                    tokens[i].Simbolo = new Simbolo<object>(Simbolo<object>.SimboloTipo.OPERADOR_ARITMETICO, tokens[i].lexema);
                 }
                 else if (EsOperadorL(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.BOOLEAN_OPERATOR;
                     tokens[i].descripcion = "Operador Lógico";
+                    tokens[i].Simbolo = new Simbolo<object>(Simbolo<object>.SimboloTipo.OPERADOR_BOOLEANO, tokens[i].lexema);
                 }
                 else if (EsComparador(tokens[i].lexema))
                 {
@@ -251,6 +263,13 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.SEPARATOR;
                     tokens[i].descripcion = "Salto de línea";
+                }
+                else if (EsBoolean(tokens[i].lexema))
+                {
+                    tokens[i].token = Token.TokenType.VALUE;
+                    tokens[i].descripcion = "Booleano";
+                    tokens[i].Simbolo = new Simbolo<object>(Simbolo<object>.SimboloTipo.BOOLEANO, bool.Parse(tokens[i].lexema));
+                    Console.WriteLine(tokens[i].Simbolo.ToString());
                 }
                 else if (EsIdentificador(tokens[i].lexema))
                 {

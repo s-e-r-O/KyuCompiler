@@ -26,6 +26,7 @@ namespace KyuCompilerF.Models
         public int linea { get; set; }
         public int columna { get; set; }
         public string descripcion { get; set; }//en caso de necesitar una descripción más detallada
+        public Simbolo<Object> Simbolo { get; set; }
 
         public Token()
         {
@@ -43,6 +44,7 @@ namespace KyuCompilerF.Models
             this.linea = linea;
             this.columna = columna;
             this.descripcion = "";
+            this.Simbolo = Simbolo;
         }
 
         public Token(string lexema, int linea, int columna)
@@ -51,13 +53,12 @@ namespace KyuCompilerF.Models
             this.lexema = lexema;
             this.linea = linea;
             this.columna = columna;
-            this.descripcion = "";
         }
 
         override
         public string ToString()
         {
-            return this.lexema + "\t es: " + this.token + "\tlinea: " + this.linea + "\tcolumna: " + this.columna + "\tdescripción: " + this.descripcion;
+            return this.lexema + "\t es: " + this.token + "\tlinea: " + this.linea + "\tcolumna: " + this.columna + "\tdescripción: " + this.descripcion + "\tsimbolo: " + this.Simbolo.tipo;
         }
 
         public string value()

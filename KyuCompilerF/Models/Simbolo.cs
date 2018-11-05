@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KyuCompilerF.Models
 {
-    class Simbolo<T>
+    public class Simbolo<T>
     {
 
         public enum SimboloTipo

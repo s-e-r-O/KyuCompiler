@@ -26,7 +26,7 @@ namespace KyuCompilerF.Models
         public int linea { get; set; }
         public int columna { get; set; }
         public string descripcion { get; set; }//en caso de necesitar una descripción más detallada
-        public Simbolo<Object> Simbolo { get; set; }
+        public Simbolo<object> Simbolo { get; set; }
 
         public Token()
         {
@@ -44,7 +44,6 @@ namespace KyuCompilerF.Models
             this.linea = linea;
             this.columna = columna;
             this.descripcion = "";
-            this.Simbolo = Simbolo;
         }
 
         public Token(string lexema, int linea, int columna)

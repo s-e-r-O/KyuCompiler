@@ -271,6 +271,7 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.IDENTIFIER;
                     tokens[i].descripcion = "Identificador";
+                    TablaSimbolo.Tabla.AddID(tokens[i].lexema);
                 }
                 else
                 {

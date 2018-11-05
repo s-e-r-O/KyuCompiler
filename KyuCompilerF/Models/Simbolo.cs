@@ -6,38 +6,75 @@ using System.Threading.Tasks;
 
 namespace KyuCompilerF.Models
 {
-    public class Simbolo<T>
+    public enum SimboloTipo
     {
+        NUMERO,
+        BOOLEANO,
+        CHAR,
+        LIST_NUMERO,
+        LIST_BOOLEANO,
+        LIST_CHAR,
+        OPERADOR_BOOLEANO,
+        OPERADOR_ARITMETICO,
+        EMPTY,
+        ERROR,
+        NULL
+    }
 
-        public enum SimboloTipo
+    public class Simbolo
+    {
+        public SimboloTipo Tipo { get; set; }
+        public Object Valor { get; set; }
+        public int Nargs { get; set; }
+        public string Operador { get; set; }
+
+        public Simbolo(SimboloTipo tipo, Object valor)
         {
-            NUMERO = 1,
-            BOOLEANO = 2,
-            CADENA = 3,
-            CHAR = 4,
-            OPERADOR_BOOLEANO = 5,
-            OPERADOR_ARITMETICO = 6,
-            NULL = -1
-        }
-        public SimboloTipo tipo { get; set; }
-        public T valor { get; set; }
-
-
-
-        public Simbolo(SimboloTipo tipo, T valor)
-        {
-            this.tipo = tipo;
-            this.valor = valor;
+            this.Tipo = tipo;
+            this.Valor = valor;
         }
 
         public Simbolo()
         {
-            this.tipo = SimboloTipo.NULL;
+            this.Tipo = SimboloTipo.NULL;
         }
 
         public string ToString()
         {
-            return "tipo: " + this.tipo + "valor: " + this.valor;
+            return "tipo: " + this.Tipo + "valor: " + this.Valor;
+        }
+
+        public static bool IsList(SimboloTipo t)
+        {
+            return t == SimboloTipo.LIST_BOOLEANO || t == SimboloTipo.LIST_CHAR || t == SimboloTipo.LIST_NUMERO;
+        }
+
+        public static SimboloTipo ListOf(SimboloTipo t)
+        {
+            switch (t)
+            {
+                case SimboloTipo.NUMERO:
+                    return SimboloTipo.LIST_NUMERO;
+                case SimboloTipo.CHAR:
+                    return SimboloTipo.LIST_CHAR;
+                case SimboloTipo.BOOLEANO:
+                    return SimboloTipo.LIST_BOOLEANO;
+            }
+            return SimboloTipo.ERROR;
+        }
+
+        public static SimboloTipo UnitOf(SimboloTipo t)
+        {
+            switch (t)
+            {
+                case SimboloTipo.LIST_NUMERO:
+                    return SimboloTipo.NUMERO;
+                case SimboloTipo.LIST_CHAR:
+                    return SimboloTipo.CHAR;
+                case SimboloTipo.LIST_BOOLEANO:
+                    return SimboloTipo.BOOLEANO;
+            }
+            return SimboloTipo.ERROR;
         }
 
     }

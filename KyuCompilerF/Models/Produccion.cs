@@ -19,7 +19,7 @@ namespace KyuCompilerF.Models
         public string[] Palabras { get; private set; }
 
         public char Cabeza { get; set; }
-        public Action<Dictionary<string, List<Simbolo<Object>>>> reglaAtributo;
+        public Action<Dictionary<string, List<Simbolo>>> reglaAtributo;
         private string cuerpo;
         public string Cuerpo
         {

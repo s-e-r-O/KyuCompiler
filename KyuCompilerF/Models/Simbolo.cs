@@ -21,14 +21,14 @@ namespace KyuCompilerF.Models
         NULL
     }
 
-    public class Simbolo<T>
+    public class Simbolo
     {
         public SimboloTipo Tipo { get; set; }
-        public T Valor { get; set; }
+        public Object Valor { get; set; }
         public int Nargs { get; set; }
         public string Operador { get; set; }
 
-        public Simbolo(SimboloTipo tipo, T valor)
+        public Simbolo(SimboloTipo tipo, Object valor)
         {
             this.Tipo = tipo;
             this.Valor = valor;

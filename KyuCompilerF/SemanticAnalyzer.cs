@@ -13,16 +13,23 @@ namespace KyuCompilerF
         {
             if (!nodo.FueEvaluado)
             {
-                Dictionary<string, Simbolo<Object>> simbolosHijos = new Dictionary<string, Simbolo<Object>>();
+                Dictionary<string, List<Simbolo>> simbolosHijos = new Dictionary<string, List<Simbolo>>();
+                simbolosHijos.Add(nodo.Contenido, new List<Simbolo>() { nodo.Symbol });
                 if (nodo.Hijos != null)
                 {
-                    
                     foreach (Nodo hijo in nodo.Hijos)
                     {
                         Evaluar(hijo);
-                        simbolosHijos.Add(hijo.Contenido, hijo.Symbol);
+                        if (!simbolosHijos.ContainsKey(nodo.Contenido))
+                        {
+                            simbolosHijos.Add(hijo.Contenido, new List<Simbolo>() { hijo.Symbol });
+                        }
+                        else
+                        {
+                            simbolosHijos[hijo.Contenido].Add(hijo.Symbol);
+                        }
                     }
-                    nodo.Produccion.reglaAtributo(simbolosHijos);
+                    nodo.ProduccionUsada.reglaAtributo(simbolosHijos);
                 }
                 nodo.FueEvaluado = true;
             }

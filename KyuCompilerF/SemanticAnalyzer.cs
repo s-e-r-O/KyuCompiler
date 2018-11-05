@@ -20,7 +20,7 @@ namespace KyuCompilerF
                     foreach (Nodo hijo in nodo.Hijos)
                     {
                         Evaluar(hijo);
-                        if (simbolosHijos.ContainsKey(nodo.Contenido))
+                        if (!simbolosHijos.ContainsKey(nodo.Contenido))
                         {
                             simbolosHijos.Add(hijo.Contenido, new List<Simbolo>() { hijo.Symbol });
                         }

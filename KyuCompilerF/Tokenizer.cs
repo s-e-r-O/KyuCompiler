@@ -133,33 +133,33 @@ namespace KyuCompilerF
                     {
                         aux = caracteres[j];
                         j++;
-                        while (!EsComilla(caracteres[j]))
+                        while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
                         {
                             aux += caracteres[j];
                             j++;
                         }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i, j));
+                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
                     {
                         aux = caracteres[j];
                         j++;
-                        while ((!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")) && j < caracteres.Length - 1)
+                        while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
                         {
                             aux += caracteres[j];
                             j++;
                         }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i, j));
+                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
                     {
                         if (!aux.Equals(""))
                         {
-                            auxTokens.Add(new Token(aux, i, j));
+                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
                         }
                         aux = "";
                     }
@@ -167,12 +167,12 @@ namespace KyuCompilerF
                     {
                         if (!EsSimboloA(caracteres[j]))
                         {
-                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i, j));
+                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
                             j++;
                         }
                         else
                         {
-                            auxTokens.Add(new Token(caracteres[j], i, j));
+                            auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
                         }
                         aux = "";
                     }
@@ -182,13 +182,9 @@ namespace KyuCompilerF
                         {
                             auxTokens.Add(new Token(aux, i, j));
                         }
-                        auxTokens.Add(new Token(caracteres[j], i, j));
+                        auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
                         aux = "";
-                    }/*
-                    if(j >= caracteres.Length - 2 && caracteres[j + 1].Equals("\n"))
-                    {
-                        auxTokens.Add(new Token("\n", i, j + 1));
-                    }*/
+                    }
                 }
 
                 if (!aux.Equals("") && !aux.Equals(" "))

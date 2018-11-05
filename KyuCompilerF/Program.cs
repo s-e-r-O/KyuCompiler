@@ -21,6 +21,8 @@ namespace KyuCompilerF
                 Parser p = new Parser();
                 p.CalcularLL1(KyuValues.Gramatica);
                 Nodo raiz = p.Evaluar(tokens);
+                SemanticAnalyzer s = new SemanticAnalyzer();
+                s.Evaluar(raiz);
                 Console.WriteLine("All good!");
             }
             catch (Exception e)

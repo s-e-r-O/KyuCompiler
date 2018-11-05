@@ -23,6 +23,7 @@ namespace KyuCompilerF.Models
 
     public class Simbolo
     {
+        public string Id { get; set; }
         public SimboloTipo Tipo { get; set; }
         public Object Valor { get; set; }
         public int Nargs { get; set; }

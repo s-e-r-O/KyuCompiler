@@ -18,6 +18,7 @@ namespace KyuCompilerF.Models
         {
             Contenido = contenido;
             Hijos = null;
+            Symbol = new Simbolo();
             FueEvaluado = default(bool);
             ProduccionUsada = null;
         }

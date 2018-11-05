@@ -265,12 +265,13 @@ namespace KyuCompilerF
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Booleano";
                     tokens[i].Simbolo = new Simbolo(SimboloTipo.BOOLEANO, bool.Parse(tokens[i].lexema));
-                    Console.WriteLine(tokens[i].Simbolo.ToString());
                 }
                 else if (EsIdentificador(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.IDENTIFIER;
                     tokens[i].descripcion = "Identificador";
+                    tokens[i].Simbolo = new Simbolo() { Id = tokens[i].lexema };
+                    TablaSimbolo.Tabla.AddID(tokens[i].lexema);
                 }
                 else
                 {

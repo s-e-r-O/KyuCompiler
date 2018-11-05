@@ -51,6 +51,7 @@
     <Compile Include="Models\Gramatica.cs" />
     <Compile Include="Models\Produccion.cs" />
     <Compile Include="Models\Simbolo.cs" />
+    <Compile Include="Models\TablaSimbolo.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="Models\Nodo.cs" />
     <Compile Include="Parser.cs" />

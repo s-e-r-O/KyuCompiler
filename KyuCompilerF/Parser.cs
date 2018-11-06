@@ -70,6 +70,7 @@ namespace KyuCompilerF
                     else
                     {
                         topProduction.Symbol = topWord.Simbolo;
+                        topProduction.Linea = topWord.linea;
                         found = true;
                     }
                 }

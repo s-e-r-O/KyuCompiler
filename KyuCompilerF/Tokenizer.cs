@@ -230,25 +230,25 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Número";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.NUMERO, int.Parse(tokens[i].lexema));
-                    Console.WriteLine(tokens[i].Simbolo.ToString());
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.NUMERO, decimal.Parse(tokens[i].lexema));
                 }
                 else if (EsOperadorA(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.ARITH_OPERATOR;
                     tokens[i].descripcion = "Operador Aritmético";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.OPERADOR_ARITMETICO, tokens[i].lexema);
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.OPERADOR, tokens[i].lexema);
                 }
                 else if (EsOperadorL(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.BOOLEAN_OPERATOR;
                     tokens[i].descripcion = "Operador Lógico";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.OPERADOR_BOOLEANO, tokens[i].lexema);
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.OPERADOR, tokens[i].lexema);
                 }
                 else if (EsComparador(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.COMPARATOR;
                     tokens[i].descripcion = "Comparador";
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.OPERADOR, tokens[i].lexema);
                 }
                 else if (tokens[i].lexema.Equals(","))
                 {

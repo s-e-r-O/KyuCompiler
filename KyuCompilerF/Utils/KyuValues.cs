@@ -209,16 +209,16 @@ namespace KyuCompilerF.Utils
                                     d["C"][0].Tipo = SimboloTipo.BOOLEANO;
                                     switch(d["Y"][0].Operador){
                                         case ">":
-                                            d["C"][0].Valor = (decimal) d["O"][0].Valor > (decimal) d["Y"][0].Valor;
+                                            d["C"][0].Valor = Convert.ToDecimal(d["O"][0].Valor) > Convert.ToDecimal(d["Y"][0].Valor);
                                             break;
                                         case ">=":
-                                            d["C"][0].Valor = (decimal) d["O"][0].Valor >= (decimal) d["Y"][0].Valor;
+                                            d["C"][0].Valor = Convert.ToDecimal(d["O"][0].Valor) >= Convert.ToDecimal(d["Y"][0].Valor);
                                             break;
                                         case "<":
-                                            d["C"][0].Valor = (decimal) d["O"][0].Valor < (decimal) d["Y"][0].Valor;
+                                            d["C"][0].Valor = Convert.ToDecimal(d["O"][0].Valor) < Convert.ToDecimal(d["Y"][0].Valor);
                                             break;
                                         case "<=":
-                                            d["C"][0].Valor = (decimal) d["O"][0].Valor <= (decimal) d["Y"][0].Valor;
+                                            d["C"][0].Valor = Convert.ToDecimal(d["O"][0].Valor) <= Convert.ToDecimal(d["Y"][0].Valor);
                                             break;
                                     }
                                 } else
@@ -257,10 +257,10 @@ namespace KyuCompilerF.Utils
                                             d["O"][0].Valor = (decimal) d["O"][1].Valor / (decimal) d["O"][2].Valor;
                                             break;
                                         case "^":
-                                            d["O"][0].Valor = Math.Pow((double) d["O"][1].Valor,(double) d["O"][2].Valor);
+                                            d["O"][0].Valor = Math.Pow(Convert.ToDouble(d["O"][1].Valor),Convert.ToDouble(d["O"][2].Valor));
                                             break;
                                         case "%":
-                                            d["O"][0].Valor = Math.Floor((double) d["O"][1].Valor) % (int) Math.Floor((double) d["O"][2].Valor);
+                                            d["O"][0].Valor = Math.Floor(Convert.ToDouble(d["O"][1].Valor)) % Math.Floor(Convert.ToDouble(d["O"][2].Valor));
                                             break;
                                     }
                                 } else if ((string) d["z"][0].Valor == "+") {

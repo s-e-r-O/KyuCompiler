@@ -62,7 +62,7 @@ namespace KyuCompilerF
         public bool EsOperadorA(string cadena)
         {
 
-            string patron = "\\+|-|\\*|/|\\^|!";
+            string patron = "\\+|-|\\*|/|\\^|%";
             Match match = Regex.Match(cadena, patron);
             return match.Success;
         }

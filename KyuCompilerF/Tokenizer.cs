@@ -91,7 +91,7 @@ namespace KyuCompilerF
         public bool EsCadena(string cadena)
         {
 
-            string patron = "^\"[\\w|\\s|\\W]*\"$";
+            string patron = "^\"[\\w|\\s|\\W|\\D]*\"$";
             Match match = Regex.Match(cadena, patron);
             return match.Success;
         }
@@ -254,7 +254,7 @@ namespace KyuCompilerF
                     tokens[i].descripcion = "Cadena";
                     tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema);
                 }
-                if (EsCaracter(tokens[i].lexema))
+                else if (EsCaracter(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Caracter";
@@ -275,7 +275,6 @@ namespace KyuCompilerF
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Número";
                     tokens[i].Simbolo = new Simbolo(SimboloTipo.NUMERO, int.Parse(tokens[i].lexema));
-                    Console.WriteLine(tokens[i].Simbolo.ToString());
                 }
                 else if (EsOperadorA(tokens[i].lexema))
                 {

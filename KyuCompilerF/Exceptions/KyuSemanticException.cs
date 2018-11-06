@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace KyuCompilerF.Exceptions
 {
-    class KyuSemanticException
+    class KyuSemanticException : ApplicationException
     {
         string descripcion;
-        int linea;
+        public int Linea { get; set; }
         
-        public KyuSemanticException(string descripcion, int linea)
+        public KyuSemanticException(string descripcion)
         {
             this.descripcion = descripcion;
-            this.linea = linea;
+            this.Linea = -1;
         }
 
         public override string ToString()
         {
-            return String.Format("Kyu {0} SemanticException: at line {1}", descripcion, linea);
+            return String.Format("Kyu {0} SemanticException: at line {1}", descripcion, Linea);
         }
     }
 }

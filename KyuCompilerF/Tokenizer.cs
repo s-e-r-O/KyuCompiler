@@ -178,9 +178,15 @@ namespace KyuCompilerF
                         {
                             break;
                         }
-                        aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
-                        aux = "";
+                        if (caracteres[j].Equals("'"))
+                        {
+                            aux += caracteres[j];
+                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
+                            aux = "";
+                        } else
+                        {
+                            break;
+                        }
                     }
                     else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
                     {
@@ -258,13 +264,13 @@ namespace KyuCompilerF
 
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Cadena";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema);
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema.TrimStart('"').TrimEnd('"'));
                 }
                 else if (EsCaracter(tokens[i].lexema))
                 {
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Caracter";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.CHAR, tokens[i].lexema);
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.CHAR, char.Parse(tokens[i].lexema.TrimStart('\'').TrimEnd('\'').Replace("\\n", "\n").Replace("\\\\", "\\")));
                 }
                 else if (EsPalabraReservada(tokens[i].lexema))
                 {

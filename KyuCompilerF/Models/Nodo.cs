@@ -13,13 +13,16 @@ namespace KyuCompilerF.Models
         public Simbolo Symbol{ get; set; }
         public string Contenido { get; set; }
         public Produccion ProduccionUsada { get; set; }
+        public int Linea { get; set; }
 
         public Nodo(string contenido)
         {
             Contenido = contenido;
             Hijos = null;
+            Symbol = new Simbolo();
             FueEvaluado = default(bool);
             ProduccionUsada = null;
+            Linea = -1;
         }
     }
 }

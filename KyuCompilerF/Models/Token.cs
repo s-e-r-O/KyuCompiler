@@ -69,7 +69,9 @@ namespace KyuCompilerF.Models
                 case TokenType.VALUE:
                     return "v";
                 case TokenType.BOOLEAN_OPERATOR:
-                    return "b";
+                    if (lexema != "~")
+                        return "b";
+                    break;
                 case TokenType.ARITH_OPERATOR:
                     return "z";
                 case TokenType.COMPARATOR:

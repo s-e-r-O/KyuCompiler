@@ -69,7 +69,7 @@ namespace KyuCompilerF
                     }
                     else
                     {
-                        //topProduction.Symbol = topWord.simbolo;
+                        topProduction.Symbol = topWord.Simbolo;
                         found = true;
                     }
                 }

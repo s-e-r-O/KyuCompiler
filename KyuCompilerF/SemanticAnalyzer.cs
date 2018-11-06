@@ -16,7 +16,10 @@ namespace KyuCompilerF
         {
             exceptions = new List<Exception>();
             Evaluar(nodo, 1);
-            throw new AggregateException(exceptions);
+            if (exceptions.Count > 0)
+            {
+                throw new AggregateException(exceptions);
+            }
         }
 
         private void Evaluar(Nodo nodo, int linea)

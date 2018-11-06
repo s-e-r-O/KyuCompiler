@@ -22,7 +22,7 @@ namespace KyuCompilerF.Models
         }
 
         private Dictionary<string, Simbolo> Simbolos { get; set; }
-
+        
         private TablaSimbolo()
         {
             Simbolos = new Dictionary<string, Simbolo>();
@@ -84,6 +84,18 @@ namespace KyuCompilerF.Models
                 return false;
             }
             return Simbolos[id] != null;
+        }
+
+        public override string ToString()
+        {
+            string s = "";
+            foreach (KeyValuePair<string, Simbolo> p in Simbolos) {
+                if (p.Value != null)
+                {
+                    s += p.Key + ": " + p.Value.Valor + " (" + p.Value.Tipo + ")\n";
+                }
+            }
+            return s;
         }
     }
 }

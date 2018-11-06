@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Exceptions\KyuGrammarException.cs" />
     <Compile Include="Exceptions\KyuInvalidTokenException.cs" />
+    <Compile Include="Exceptions\KyuSemanticException.cs" />
     <Compile Include="Exceptions\KyuSyntaxException.cs" />
     <Compile Include="Lector.cs" />
     <Compile Include="Models\Gramatica.cs" />

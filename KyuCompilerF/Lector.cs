@@ -29,11 +29,7 @@ namespace KyuCompilerF
                     {
                         linea = linea.Trim();
                         linea = linea.Split(';')[0];
-                        if (linea != "")
-                        {
-                            //linea = Regex.Replace(linea, @"\s+", " ");
-                            lineas.Add(linea);
-                        }
+                        lineas.Add(linea);
                     }
                 }
 

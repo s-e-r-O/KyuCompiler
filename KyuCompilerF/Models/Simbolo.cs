@@ -14,10 +14,10 @@ namespace KyuCompilerF.Models
         LIST_NUMERO,
         LIST_BOOLEANO,
         LIST_CHAR,
-        OPERADOR_BOOLEANO,
-        OPERADOR_ARITMETICO,
+        OPERADOR,
         EMPTY,
         ERROR,
+        FUNCION,
         NULL
     }
 
@@ -33,11 +33,13 @@ namespace KyuCompilerF.Models
         {
             this.Tipo = tipo;
             this.Valor = valor;
+            Nargs = -1;
         }
 
         public Simbolo()
         {
             this.Tipo = SimboloTipo.NULL;
+            Nargs = -1;
         }
 
         public string ToString()

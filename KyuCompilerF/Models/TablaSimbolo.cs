@@ -85,5 +85,14 @@ namespace KyuCompilerF.Models
             }
             return Simbolos[id] != null;
         }
+
+        public override string ToString()
+        {
+            string s = "";
+            foreach (KeyValuePair<string, Simbolo> p in Simbolos) {
+                s += p.Key + ": " + p.Value.Valor + " (" + p.Value.Tipo +")\n";
+            }
+            return s;
+        }
     }
 }

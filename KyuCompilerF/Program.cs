@@ -24,6 +24,7 @@ namespace KyuCompilerF
                 SemanticAnalyzer s = new SemanticAnalyzer();
                 s.Evaluar(raiz);
                 Console.WriteLine("All good!");
+                Console.WriteLine(TablaSimbolo.Tabla);
             }
             catch (Exception e)
             {

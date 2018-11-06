@@ -20,29 +20,58 @@ namespace KyuCompilerF.Utils
                     {
                         Produccciones = new List<Produccion>
                         {
-                            new Produccion('S', "kyu# \n { \n M }", d => AssignType(d, "S", 0, "M", 0)),
-                            new Produccion('M', "I \n J", d => AssignType(d, "M", 0, "I", 0)),
-                            new Produccion('J', "M", d => AssignType(d, "J", 0, "M", 0)),
-                            new Produccion('J', Produccion.EPSILON, d => d["J"][0].Tipo = SimboloTipo.EMPTY),
-                            new Produccion('I', "D", d => AssignType(d, "I", 0, "D", 0)),
-                            new Produccion('I', "H", d => AssignType(d, "I", 0, "H", 0)),
-                            new Produccion('I', "G", d => AssignType(d, "I", 0, "G", 0)),
-                            new Produccion('I', "L", d => AssignType(d, "I", 0, "L", 0)),
-                            new Produccion('I', "stop", d=> d["I"][0].Tipo = SimboloTipo.EMPTY),
-                            new Produccion('I', "return E", d => AssignType(d, "I", 0, "E", 0)),
+                            new Produccion('S', "kyu# \n { \n M }"),
+                            new Produccion('M', "I \n J"),
+                            new Produccion('J', "M"),
+                            new Produccion('J', Produccion.EPSILON),
+                            new Produccion('I', "D"),
+                            new Produccion('I', "H"),
+                            new Produccion('I', "G"),
+                            new Produccion('I', "L"),
+                            new Produccion('I', "stop"),
+                            new Produccion('I', "return E"),
                             new Produccion('D', "i K", (d) => {
                                 if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
                                 {
-                                    Assign(d, "i", 0, "K", 0);
+                                    if (d["K"][0].Tipo == SimboloTipo.FUNCION){
+                                        SetError(d, "D", 0);
+                                    } else
+                                    {
+                                        Assign(d, "i", 0, "K", 0);
+                                        TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
+                                    }
+                                } 
+                                else
+                                {
+                                    d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
+                                    if (d["i"][0].Tipo == SimboloTipo.FUNCION)
+                                    {
+                                        if (d["i"][0].Nargs != d["K"][0].Nargs)
+                                        {
+                                            SetError(d, "D", 0);
+                                        }
+                                    } else
+                                    {
+                                        SetError(d, "D", 0);
+                                    }
+                                }
+                            }),
+                            new Produccion('D', "function i P is \n M done", (d) => {
+                                if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
+                                {
+                                    AssignType(d, "i", 0, "P", 0);
+                                    d["i"][0].Nargs = d["P"][0].Nargs;
                                     TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                 } else
                                 {
                                     SetError(d, "D", 0);
                                 }
                             }),
-                            new Produccion('D', "function i P is \n M done"),
                             new Produccion('K', "is B", d => Assign(d, "K", 0, "B", 0)),
-                            new Produccion('K', "R", d => AssignType(d, "K", 0, "R", 0)),
+                            new Produccion('K', "R", d => {
+                                AssignType(d, "K", 0, "R", 0);
+                                d["K"][0].Nargs = d["R"][0].Nargs;
+                            }),
                             new Produccion('B', "E", d => Assign(d, "B", 0, "E", 0)),
                             new Produccion('B', "[ X ]", d => d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo)),
                             new Produccion('X', "E Z", (d) => {
@@ -65,7 +94,15 @@ namespace KyuCompilerF.Utils
                             new Produccion('Z', Produccion.EPSILON, d => d["Z"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('H', "change A changed", d => AssignType(d, "H", 0, "A", 0)),
                             new Produccion('A', "i N \n", (d) =>{
-                                if (d["N"][0].Tipo != d["i"][0].Tipo) {
+                                if (TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id)){
+                                    d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
+                                    if (d["N"][0].Tipo != d["i"][0].Tipo) {
+                                        SetError(d, "A", 0);
+                                    } else {
+                                        d["i"][0].Valor = d["N"][0].Valor;
+                                        TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
+                                    }
+                                } else {
                                     SetError(d, "A", 0);
                                 }
                             }),
@@ -77,6 +114,7 @@ namespace KyuCompilerF.Utils
                                     SetError(d, "P", 0);
                                 } else
                                 {
+                                    d["P"][0].Tipo = SimboloTipo.FUNCION;
                                     d["P"][0].Nargs = d["Q"][0].Nargs + 1;
                                 }
                             }),
@@ -97,6 +135,7 @@ namespace KyuCompilerF.Utils
                                     SetError(d, "R", 0);
                                 } else
                                 {
+                                    d["R"][0].Tipo = SimboloTipo.FUNCION;
                                     d["R"][0].Nargs = d["U"][0].Nargs + 1;
                                 }
                             }),
@@ -110,7 +149,7 @@ namespace KyuCompilerF.Utils
                                     d["U"][0].Nargs = d["U"][1].Nargs + 1;
                                 }
                             }),
-                            new Produccion('U', Produccion.EPSILON, d => d["U"][0].Tipo = SimboloTipo.EMPTY),
+                            new Produccion('U', Produccion.EPSILON, d => d["U"][0].Nargs = 0),
                             new Produccion('L', "forevery i in i \n M done", (d) => {
                                 if (Simbolo.IsList(d["i"][1].Tipo)){
                                     d["i"][0].Tipo = Simbolo.UnitOf(d["i"][1].Tipo);
@@ -175,16 +214,16 @@ namespace KyuCompilerF.Utils
                                     d["C"][0].Tipo = SimboloTipo.BOOLEANO;
                                     switch(d["Y"][0].Operador){
                                         case ">":
-                                            d["C"][0].Valor = (float) d["O"][0].Valor > (float) d["Y"][0].Valor;
+                                            d["C"][0].Valor = (decimal) d["O"][0].Valor > (decimal) d["Y"][0].Valor;
                                             break;
                                         case ">=":
-                                            d["C"][0].Valor = (float) d["O"][0].Valor >= (float) d["Y"][0].Valor;
+                                            d["C"][0].Valor = (decimal) d["O"][0].Valor >= (decimal) d["Y"][0].Valor;
                                             break;
                                         case "<":
-                                            d["C"][0].Valor = (float) d["O"][0].Valor < (float) d["Y"][0].Valor;
+                                            d["C"][0].Valor = (decimal) d["O"][0].Valor < (decimal) d["Y"][0].Valor;
                                             break;
                                         case "<=":
-                                            d["C"][0].Valor = (float) d["O"][0].Valor <= (float) d["Y"][0].Valor;
+                                            d["C"][0].Valor = (decimal) d["O"][0].Valor <= (decimal) d["Y"][0].Valor;
                                             break;
                                     }
                                 } else
@@ -211,22 +250,22 @@ namespace KyuCompilerF.Utils
                                     d["O"][0].Tipo = SimboloTipo.NUMERO;
                                     switch((string)d["z"][0].Valor){
                                         case "+":
-                                            d["O"][0].Valor =(float) d["O"][1].Valor + (float) d["O"][2].Valor;
+                                            d["O"][0].Valor = (decimal) d["O"][1].Valor + (decimal) d["O"][2].Valor;
                                             break;
                                         case "-":
-                                            d["O"][0].Valor =(float) d["O"][1].Valor - (float) d["O"][2].Valor;
+                                            d["O"][0].Valor = (decimal) d["O"][1].Valor - (decimal) d["O"][2].Valor;
                                             break;
                                         case "*":
-                                            d["O"][0].Valor =(float) d["O"][1].Valor * (float) d["O"][2].Valor;
+                                            d["O"][0].Valor = (decimal) d["O"][1].Valor * (decimal) d["O"][2].Valor;
                                             break;
                                         case "/":
-                                            d["O"][0].Valor =(float) d["O"][1].Valor / (float) d["O"][2].Valor;
+                                            d["O"][0].Valor = (decimal) d["O"][1].Valor / (decimal) d["O"][2].Valor;
                                             break;
                                         case "^":
-                                            d["O"][0].Valor = Math.Pow((float) d["O"][1].Valor,(float) d["O"][2].Valor);
+                                            d["O"][0].Valor = Math.Pow((double) d["O"][1].Valor,(double) d["O"][2].Valor);
                                             break;
                                         case "%":
-                                            d["O"][0].Valor =(int) d["O"][1].Valor % (int) d["O"][2].Valor;
+                                            d["O"][0].Valor = Math.Floor((double) d["O"][1].Valor) % (int) Math.Floor((double) d["O"][2].Valor);
                                             break;
                                     }
                                 } else if ((string) d["z"][0].Valor == "+") {
@@ -269,6 +308,7 @@ namespace KyuCompilerF.Utils
                                     SetError(d, "T", 0);
                                 } else
                                 {
+                                    d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
                                     Assign(d, "T", 0, "i", 0);
                                 }
                             }),
@@ -293,6 +333,7 @@ namespace KyuCompilerF.Utils
 
         static void SetError(Dictionary<string, List<Simbolo>> d, string target, int targetIndex)
         {
+            Console.WriteLine("ERROR: " + target);
             d[target][targetIndex].Tipo = SimboloTipo.ERROR;
         }
     }

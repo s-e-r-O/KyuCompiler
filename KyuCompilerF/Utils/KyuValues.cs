@@ -355,6 +355,10 @@ namespace KyuCompilerF.Utils
                                             SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
                                         }
                                     }
+                                    else
+                                    {
+                                        SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
+                                    }
                                 } else
                                 {
                                     SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo

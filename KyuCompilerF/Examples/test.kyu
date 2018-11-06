@@ -1,8 +1,5 @@
 kyu#
 {
-    myVar is 4
-	myVar2 is "myVar"
-
-	myVar3 is * myVar, + 50, 1
+    a is is 5
 			
 }

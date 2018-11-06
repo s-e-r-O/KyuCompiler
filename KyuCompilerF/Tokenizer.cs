@@ -112,92 +112,95 @@ namespace KyuCompilerF
 
             for (int i = 0; i < codigo.Length; i++)
             {
-                //no borrar estas 2 líneas por favor, son para evitar excepciones
-                caracteres = new string[codigo[i].Length + 1];
-                caracteres[codigo[i].Length] = "\n";
-
-                //no quitar el -1
-                for (int j = 0; j < caracteres.Length - 1; j++)
+                if (codigo[i] != "")
                 {
-                    caracteres[j] = codigo[i].Substring(j, 1);
-                }
+                    //no borrar estas 2 líneas por favor, son para evitar excepciones
+                    caracteres = new string[codigo[i].Length + 1];
+                    caracteres[codigo[i].Length] = "\n";
 
-                //no quitar el -1
-                for (int j = 0; j < caracteres.Length - 1; j++)
-                {
-                    if (!caracteres[j].Equals(" ") && !caracteres[j].Equals("\t") && !EsSimbolo(caracteres[j]))
+                    //no quitar el -1
+                    for (int j = 0; j < caracteres.Length - 1; j++)
                     {
-                        aux += caracteres[j];
-                    }//si es una cadena
-                    else if (EsComilla(caracteres[j]))
+                        caracteres[j] = codigo[i].Substring(j, 1);
+                    }
+
+                    //no quitar el -1
+                    for (int j = 0; j < caracteres.Length - 1; j++)
                     {
-                        aux = caracteres[j];
-                        j++;
-                        while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
+                        if (!caracteres[j].Equals(" ") && !caracteres[j].Equals("\t") && !EsSimbolo(caracteres[j]))
                         {
                             aux += caracteres[j];
-                            j++;
-                        }
-                        aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
-                        aux = "";
-                    }
-                    else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
-                    {
-                        aux = caracteres[j];
-                        j++;
-                        while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
+                        }//si es una cadena
+                        else if (EsComilla(caracteres[j]))
                         {
+                            aux = caracteres[j];
+                            j++;
+                            while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
+                            {
+                                aux += caracteres[j];
+                                j++;
+                            }
                             aux += caracteres[j];
+                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                            aux = "";
+                        }
+                        else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
+                        {
+                            aux = caracteres[j];
                             j++;
+                            while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
+                            {
+                                aux += caracteres[j];
+                                j++;
+                            }
+                            aux += caracteres[j];
+                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                            aux = "";
                         }
-                        aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
-                        aux = "";
-                    }
-                    else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
-                    {
-                        if (!aux.Equals(""))
+                        else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
                         {
-                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
+                            if (!aux.Equals(""))
+                            {
+                                auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
+                            }
+                            aux = "";
                         }
-                        aux = "";
-                    }
-                    else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
-                    {
-                        if (!EsSimboloA(caracteres[j]))
+                        else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
                         {
-                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
-                            j++;
+                            if (!EsSimboloA(caracteres[j]))
+                            {
+                                auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
+                                j++;
+                            }
+                            else
+                            {
+                                auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                            }
+                            aux = "";
                         }
-                        else
+                        else if (EsSimbolo(caracteres[j]))
                         {
+                            if (!aux.Equals(""))
+                            {
+                                auxTokens.Add(new Token(aux, i, j));
+                            }
                             auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                            aux = "";
                         }
-                        aux = "";
                     }
-                    else if (EsSimbolo(caracteres[j]))
+
+                    if (!aux.Equals("") && !aux.Equals(" "))
                     {
-                        if (!aux.Equals(""))
-                        {
-                            auxTokens.Add(new Token(aux, i, j));
-                        }
-                        auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                        auxTokens.Add(new Token(aux, i, 0));
                         aux = "";
                     }
-                }
 
-                if (!aux.Equals("") && !aux.Equals(" "))
-                {
-                    auxTokens.Add(new Token(aux, i, 0));
-                    aux = "";
-                }
+                    auxTokens.Add(new Token("\n", i, caracteres.Length));
 
-                auxTokens.Add(new Token("\n", i, caracteres.Length));
-
-                if (i >= codigo.Length - 1 && !aux.Equals(" ") && !aux.Equals(""))
-                {
-                    auxTokens.Add(new Token(aux, i, codigo.Length - 1));
+                    if (i >= codigo.Length - 1 && !aux.Equals(" ") && !aux.Equals(""))
+                    {
+                        auxTokens.Add(new Token(aux, i, codigo.Length - 1));
+                    }
                 }
             }
 

@@ -26,6 +26,13 @@ namespace KyuCompilerF
                 Console.WriteLine("All good!");
                 Console.WriteLine(TablaSimbolo.Tabla);
             }
+            catch (AggregateException e)
+            {
+                e.Handle(ex => {
+                    Console.WriteLine(ex);
+                    return true;
+                    });
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e);

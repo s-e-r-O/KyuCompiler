@@ -1,4 +1,5 @@
-﻿using KyuCompilerF.Models;
+﻿using KyuCompilerF.Exceptions;
+using KyuCompilerF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace KyuCompilerF.Utils
                                 if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
                                 {
                                     if (d["K"][0].Tipo == SimboloTipo.FUNCION){
-                                        SetError(d, "D", 0, "Llamar a una funcion no inicializada"); // Llamar a una funcion no inicializada
+                                        SetError(d, "D", 0, KyuSemanticException.Type.FUNCTION_NOT_INITIALIZED, d["i"][0].Id); // Llamar a una funcion no inicializada
                                     } else
                                     {
                                         Assign(d, "i", 0, "K", 0);
@@ -47,15 +48,15 @@ namespace KyuCompilerF.Utils
                                     if (d["i"][0].Tipo == SimboloTipo.FUNCION)
                                     {
                                         if (d["K"][0].Tipo != SimboloTipo.FUNCION) {
-                                            SetError(d, "D", 0, "Redeclarar una funcion como variable"); // Redeclarar una funcion como variable
+                                            SetError(d, "D", 0, KyuSemanticException.Type.FUNCTION_ALREADY_DECLARED, d["i"][0].Id); // Redeclarar una funcion como variable
                                         }
                                         else if (d["i"][0].Nargs != d["K"][0].Nargs)
                                         {
-                                            SetError(d, "D", 0, "Numero de argumentos no es el correcto"); // Numero de argumentos no es el correcto
+                                            SetError(d, "D", 0, KyuSemanticException.Type.NUMBER_OF_ARGUMENTS_INVALID, d["i"][0].Id + " has " + d["i"][0].Nargs + " args, not " + d["K"][0].Nargs ); // Numero de argumentos no es el correcto
                                         }
                                     } else
                                     {
-                                        SetError(d, "D", 0, "Redeclarar una variable"); // Redeclarar una variable
+                                        SetError(d, "D", 0, KyuSemanticException.Type.VARIABLE_ALREADY_DECLARED, d["i"][0].Id); // Redeclarar una variable
                                     }
                                 }
                             }),
@@ -67,7 +68,7 @@ namespace KyuCompilerF.Utils
                                     TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                 } else
                                 {
-                                    SetError(d, "D", 0, "Redeclarar una funcion"); // Redeclarar una funcion
+                                    SetError(d, "D", 0, KyuSemanticException.Type.FUNCTION_ALREADY_DECLARED, d["i"][0].Id); // Redeclarar una funcion
                                 }
                             }),
                             new Produccion('K', "is B", d => Assign(d, "K", 0, "B", 0)),
@@ -79,7 +80,7 @@ namespace KyuCompilerF.Utils
                             new Produccion('B', "[ X ]", d => d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo)),
                             new Produccion('X', "E Z", (d) => {
                                 if (d["Z"][0].Tipo != SimboloTipo.EMPTY && d["E"][0].Tipo != d["Z"][0].Tipo){
-                                    SetError(d, "X", 0, "Conflicto de tipos"); // Listas de distinto tipo
+                                    SetError(d, "X", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][0].Tipo.ToString()); // Listas de distinto tipo
                                 } else
                                 {
                                     AssignType(d, "X", 0, "E", 0);
@@ -88,7 +89,7 @@ namespace KyuCompilerF.Utils
                             new Produccion('X', Produccion.EPSILON, d => d["X"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('Z', ", E Z", (d) => {
                                 if (d["E"][0].Tipo != d["Z"][1].Tipo){
-                                    SetError(d, "Z", 0, "Confilcto de tipos"); // Listas de distinto tipo
+                                    SetError(d, "Z", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][1].Tipo.ToString()); // Listas de distinto tipo
                                 } else
                                 {
                                     AssignType(d, "Z", 0, "E", 0);
@@ -100,13 +101,13 @@ namespace KyuCompilerF.Utils
                                 if (TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id)){
                                     d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
                                     if (d["N"][0].Tipo != d["i"][0].Tipo) {
-                                        SetError(d, "A", 0, "Conflicto de tipos"); // Tipos no concuerdan
+                                        SetError(d, "A", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["i"][0].Id + ": " + d["i"][0].Tipo.ToString() + " - " + d["N"][0].Tipo.ToString()); // Tipos no concuerdan
                                     } else {
                                         d["i"][0].Valor = d["N"][0].Valor;
                                         TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                     }
                                 } else {
-                                    SetError(d, "A", 0, "Variable no declarada"); // Uso de varibale no declarada
+                                    SetError(d, "A", 0, KyuSemanticException.Type.VARIABLE_NOT_INITIALIZED, d["i"][0].Id); // Uso de varibale no declarada
                                 }
                             }),
                             new Produccion('N', ", A E", d => Assign(d, "N", 0, "E", 0)),
@@ -147,22 +148,22 @@ namespace KyuCompilerF.Utils
                                             TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                         } else
                                         {
-                                            SetError(d, "L", 0, "No es lista"); // No es lista
+                                            SetError(d, "L", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["i"][1].Id + " : "+ d["1"][0].Tipo.ToString()+ "  is not a list"); // No es lista
                                         }
                                     } else
                                     {
-                                        SetError(d, "L", 0, "Variable no declarada"); // Variable no declarada
+                                        SetError(d, "L", 0, KyuSemanticException.Type.VARIABLE_NOT_INITIALIZED, d["i"][1].Id); // Variable no declarada
                                     }
                                 } else
                                 {
-                                    SetError(d, "L", 0, "Nombre de variable ya utilizado"); // Nombre de variable ya utilizado 
+                                    SetError(d, "L", 0, KyuSemanticException.Type.VARIABLE_ALREADY_DECLARED, d["i"][0].Id); // Nombre de variable ya utilizado 
                                 }
                             }),
                             new Produccion('L', "forever \n M done"),
                             new Produccion('G', "given E \n M V", (d) => {
                                 if (d["E"][0].Tipo != SimboloTipo.BOOLEANO)
                                 {
-                                    SetError(d, "G", 0, "Condicion no valida"); // Condicion no valida 
+                                    SetError(d, "G", 0, KyuSemanticException.Type.INVALID_CONDITION, d["E"][0].Tipo.ToString()); // Condicion no valida 
                                 }   
                             }),
                             new Produccion('V', "done"),
@@ -185,7 +186,7 @@ namespace KyuCompilerF.Utils
                                     }
                                 } else
                                 {
-                                    SetError(d, "E", 0, "Conflicto de tipos"); // Conflicto de tipos
+                                    SetError(d, "E", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["C"][0].Tipo.ToString() + " - " + d["W"][0].Tipo.ToString()); // Conflicto de tipos
                                 }
                             }),
                             new Produccion('W', "b E", (d) => {
@@ -200,7 +201,7 @@ namespace KyuCompilerF.Utils
                                 if (d["Y"][0].Tipo == SimboloTipo.EMPTY) {
                                     Assign(d, "C", 0, "O", 0);
                                 } else if (d["O"][0].Tipo != d["Y"][0].Tipo) {
-                                    SetError(d, "C", 0, "Conflicto de tipos"); // Conflicto de tipos
+                                    SetError(d, "C", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][0].Tipo.ToString() + " - " + d["Y"][0].Tipo.ToString()); // Conflicto de tipos
                                 } else if (d["Y"][0].Operador == "==") {
                                     d["C"][0].Tipo = SimboloTipo.BOOLEANO;
                                     d["C"][0].Valor = d["O"][0].Valor == d["Y"][0].Valor;
@@ -222,12 +223,12 @@ namespace KyuCompilerF.Utils
                                     }
                                 } else
                                 {
-                                    SetError(d, "C", 0, "Conflicto de tipos"); // Conflicto de tipos
+                                    SetError(d, "C", 0, KyuSemanticException.Type.CONFLICTING_TYPES, "Only numbers can be compared"); // Conflicto de tipos
                                 }
                             }),
                             new Produccion('C', "~ ( C )", (d) => {
                                 if (d["C"][1].Tipo != SimboloTipo.BOOLEANO) {
-                                    SetError(d, "C", 0, "Conflicto de tipos"); // Conflicto de tipos
+                                    SetError(d, "C", 0, KyuSemanticException.Type.CONFLICTING_TYPES, "Can't get negation of a non boolean type"); // Conflicto de tipos
                                 } else
                                 {
                                     AssignType(d, "C", 0, "C", 1);
@@ -269,12 +270,12 @@ namespace KyuCompilerF.Utils
                                             if (d["O"][1].Tipo == d["O"][2].Tipo){
                                                 // Concatenate
                                             } else {
-                                                SetError(d, "O", 0, "Conflicto de tipos"); // Conflicto de tipo
+                                                SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString()); // Conflicto de tipo
                                             }
                                         } else if (Simbolo.UnitOf(d["O"][1].Tipo) == d["O"][2].Tipo) {
                                             // Add
                                         } else {
-                                            SetError(d, "O", 0, "Conflicto de tipos"); // Conflicto de tipo
+                                            SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString()); // Conflicto de tipo
                                         }
                                     } else if (Simbolo.IsList(d["O"][2].Tipo)){
                                         AssignType(d, "O", 0, "O", 2);
@@ -282,24 +283,24 @@ namespace KyuCompilerF.Utils
                                             if (d["O"][1].Tipo == d["O"][2].Tipo){
                                                 // Concatenate
                                             } else {
-                                                SetError(d, "O", 0, "Conflicto de tipos");  // Conflicto de tipo
+                                                SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
                                             }
                                         } else if (Simbolo.UnitOf(d["O"][2].Tipo) == d["O"][1].Tipo) {
                                             // Add
                                         } else {
-                                            SetError(d, "O", 0, "Conflicto de tipos");  // Conflicto de tipo
+                                            SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
                                         }
                                     }
                                 } else
                                 {
-                                    SetError(d, "O", 0, "Conflicto de tipos");  // Conflicto de tipo
+                                    SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
                                 }
                             }),
                             new Produccion('O', "T", d => Assign(d, "O", 0, "T", 0)),
                             new Produccion('T', "i", (d) => {
                                 if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
                                 {
-                                    SetError(d, "T", 0, "Variable no declarada"); // Variable no declarada
+                                    SetError(d, "T", 0, KyuSemanticException.Type.VARIABLE_NOT_INITIALIZED, d["i"][0].Id); // Variable no declarada
                                 } else
                                 {
                                     d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
@@ -325,10 +326,10 @@ namespace KyuCompilerF.Utils
             d[target][targetIndex].Tipo = d[origin][originIndex].Tipo;
         }
 
-        static void SetError(Dictionary<string, List<Simbolo>> d, string target, int targetIndex, string desc)
+        static void SetError(Dictionary<string, List<Simbolo>> d, string target, int targetIndex, KyuSemanticException.Type tipo, string desc)
         {
-            Console.WriteLine("ERROR: " + desc);
             d[target][targetIndex].Tipo = SimboloTipo.ERROR;
+            throw new KyuSemanticException(tipo, desc); 
         }
     }
 }

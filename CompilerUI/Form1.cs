@@ -38,7 +38,6 @@ namespace CompilerUI
         private void Form1_Load(object sender, EventArgs e)
         {
             StopButton.Visible = false;
-            //LineNumberTextBox.Enabled = false;
             LineNumberTextBox.ReadOnly = true;
             LineNumberTextBox.Font = TextEditorTextBox.Font;
         }
@@ -62,7 +61,7 @@ namespace CompilerUI
         {
             int w = 25;
             
-            int line = TextEditorTextBox.Lines.Length;       // OBTENEMOS EL NUMERO TOTAL DE LINEAS DEL richTextBox1:
+            int line = TextEditorTextBox.Lines.Length;      
 
             if (line <= 99)
             {
@@ -108,54 +107,31 @@ namespace CompilerUI
         private void TextEditorTextBox_TextChanged(object sender, EventArgs e)
         {
             AddLineNumeration();
-            //highligthKeywords(Color.DarkTurquoise, 0);
-            syntaxHighLight();
+            highligthKeywords(0);
         }
 
-        private void highligthKeywords(string word, Color color, int startIndex)
+        private void highligthKeywords(int startIndex)
         {
-            /*string word;
+            string word;
             for (int i = 0; i < keywordsList.Length; i++)
             {
                 word = keywordsList[i];
                 if (this.TextEditorTextBox.Text.Contains(word))
-                {*/
+                {
                     int index = -1;
                     int selectStart = this.TextEditorTextBox.SelectionStart;
 
                     while ((index = this.TextEditorTextBox.Text.IndexOf(word, (index + 1))) != -1)
                     {
-                        //MessageBox.Show("La comilla: " + tokenizer.EsComilla(word));
-                        //MessageBox.Show("La cadena: " + tokenizer.EsCadena(word));
                         this.TextEditorTextBox.Select((index + startIndex), word.Length);
-                        this.TextEditorTextBox.SelectionColor = color;
+                        this.TextEditorTextBox.SelectionColor = keywordColor;
                         this.TextEditorTextBox.Select(selectStart, 0);
-                        this.TextEditorTextBox.SelectionColor = Color.Black;
+                        this.TextEditorTextBox.SelectionColor = wordsColor;
                     }
-                //}
-            //}
-        }
-
-        private void syntaxHighLight()
-        {
-            string texto = TextEditorTextBox.Text.Replace("\t", " ");
-            string[] words = texto.Split(new char[] {' ', '\n' } , StringSplitOptions.RemoveEmptyEntries);
-            foreach (string word in words)
-            {
-                if (tokenizer.EsCadena(word))
-                {
-                    highligthKeywords(word, cadenaColor, 0);
-                }
-                else if (tokenizer.EsPalabraReservada(word))
-                {
-                    highligthKeywords(word, keywordColor, 0);
-                }
-                else
-                {
-                    highligthKeywords(word, wordsColor, 0);
                 }
             }
         }
+
 
         private void TextEditorTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -208,7 +184,6 @@ namespace CompilerUI
         {
             StopButton.Visible = true;
             TextEditorTextBox.ReadOnly = true;
-            //TextEditorTextBox.Enabled = false;
             PlayButton.Enabled = false;
 
             if (countSaving == 0)
@@ -260,7 +235,6 @@ namespace CompilerUI
             StopButton.Visible = false;
             PlayButton.Enabled = true;
             TextEditorTextBox.ReadOnly = false;
-            //TextEditorTextBox.Enabled = true;
             OutputLabel.Text = "";
             ErrorLabel.Text = "";
             tabPage2.Text = "Error List";
@@ -291,7 +265,7 @@ namespace CompilerUI
 
         private void TextEditorTextBox_CursorChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void darkNigthToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -303,7 +277,8 @@ namespace CompilerUI
             cadenaColor = Color.DarkOrange;
             wordsColor = Color.RosyBrown;
             OutputLabel.ForeColor = Color.RosyBrown;
-            syntaxHighLight();
+            TextEditorTextBox.ForeColor = wordsColor;
+            highligthKeywords(0);
         }
 
         private void lightToolStripMenuItem_Click(object sender, EventArgs e)
@@ -315,7 +290,8 @@ namespace CompilerUI
             cadenaColor = Color.DarkRed;
             wordsColor = Color.Black;
             OutputLabel.ForeColor = Color.Black;
-            syntaxHighLight();
+            TextEditorTextBox.ForeColor = wordsColor;
+            highligthKeywords(0);
         }
 
         private void LineNumberTextBox_ReadOnlyChanged(object sender, EventArgs e)

@@ -1,5 +1,7 @@
 kyu#
 {
-    a is 5
-			
+	function f a,b is
+		x is 7
+	done
+	f 1,2,3
 }

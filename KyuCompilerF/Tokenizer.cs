@@ -36,6 +36,13 @@ namespace KyuCompilerF
             return match.Success;
         }
 
+        public bool EsCaracter(string cadena)
+        {
+            string patron = "^'[^\"\\\\']{1}'$|^'\\\\n'$|^'\\\\\\\\'$|^'\\\\\"'$|^'\\\\''$";
+            Match match = Regex.Match(cadena, patron);
+            return match.Success;
+        }
+
         public bool EsBoolean(string cadena)
         {
             string patron = "^true$|^false$";

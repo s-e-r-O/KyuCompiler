@@ -1,6 +1,7 @@
 ﻿using KyuCompilerF.Exceptions;
 using KyuCompilerF.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,22 +78,51 @@ namespace KyuCompilerF.Utils
                                 d["K"][0].Nargs = d["R"][0].Nargs;
                             }),
                             new Produccion('B', "E", d => Assign(d, "B", 0, "E", 0)),
-                            new Produccion('B', "[ X ]", d => d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo)),
+                            new Produccion('B', "[ X ]", (d) => {
+                                d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo);
+                                d["B"][0].Valor = d["X"][0].Valor;
+                            }),
                             new Produccion('X', "E Z", (d) => {
-                                if (d["Z"][0].Tipo != SimboloTipo.EMPTY && d["E"][0].Tipo != d["Z"][0].Tipo){
-                                    SetError(d, "X", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][0].Tipo.ToString()); // Listas de distinto tipo
+                                if (d["Z"][0].Tipo != SimboloTipo.EMPTY){
+                                    if (d["E"][0].Tipo != d["Z"][0].Tipo){
+                                        SetError(d, "X", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][0].Tipo.ToString()); // Listas de distinto tipo
+                                    } else
+                                    {
+                                        AssignType(d, "X", 0, "E", 0);
+                                        d["X"][0].Valor = new List<Object>();
+                                        ((IList)d["X"][0].Valor).Add(d["E"][0].Valor);
+                                        foreach (Object o in ((IList)d["Z"][0].Valor))
+                                        {
+                                            ((IList)d["X"][0].Valor).Add(o);
+                                        }
+                                    }
                                 } else
                                 {
                                     AssignType(d, "X", 0, "E", 0);
+                                    d["X"][0].Valor = new List<Object>();
+                                    ((IList)d["X"][0].Valor).Add(d["E"][0].Valor);
                                 }
                             }),
                             new Produccion('X', Produccion.EPSILON, d => d["X"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('Z', ", E Z", (d) => {
-                                if (d["Z"][1].Tipo != SimboloTipo.EMPTY && d["E"][0].Tipo != d["Z"][1].Tipo){
-                                    SetError(d, "Z", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][1].Tipo.ToString()); // Listas de distinto tipo
+                                if (d["Z"][1].Tipo != SimboloTipo.EMPTY){
+                                    if (d["E"][0].Tipo != d["Z"][1].Tipo){
+                                        SetError(d, "Z", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][1].Tipo.ToString()); // Listas de distinto tipo
+                                    } else
+                                    {
+                                        AssignType(d, "Z", 0, "E", 0);
+                                        d["Z"][0].Valor = new List<Object>();
+                                        ((IList)d["Z"][0].Valor).Add(d["E"][0].Valor);
+                                        foreach (Object o in ((IList)d["Z"][1].Valor))
+                                        {
+                                            ((IList)d["Z"][0].Valor).Add(o);
+                                        }
+                                    }
                                 } else
                                 {
                                     AssignType(d, "Z", 0, "E", 0);
+                                    d["Z"][0].Valor = new List<Object>();
+                                    ((IList)d["Z"][0].Valor).Add(d["E"][0].Valor);
                                 }
                             }),
                             new Produccion('Z', Produccion.EPSILON, d => d["Z"][0].Tipo = SimboloTipo.EMPTY),
@@ -145,6 +175,7 @@ namespace KyuCompilerF.Utils
                                         d["i"][1] = TablaSimbolo.Tabla.Get(d["i"][1].Id);
                                         if (Simbolo.IsList(d["i"][1].Tipo)){
                                             d["i"][0].Tipo = Simbolo.UnitOf(d["i"][1].Tipo);
+                                            d["i"][0].Valor = ((IList) d["i"][1].Valor)[0];
                                             TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                         } else
                                         {
@@ -266,27 +297,38 @@ namespace KyuCompilerF.Utils
                                 } else if ((string) d["z"][0].Valor == "+") {
                                     if (Simbolo.IsList(d["O"][1].Tipo)){
                                         AssignType(d, "O", 0, "O", 1);
+                                        d["O"][0].Valor = new List<Object>();
                                         if (Simbolo.IsList(d["O"][2].Tipo)){
                                             if (d["O"][1].Tipo == d["O"][2].Tipo){
-                                                // Concatenate
+                                                foreach (Object o in ((IList)d["O"][1].Valor))
+                                                {
+                                                    ((IList)d["O"][0].Valor).Add(o);
+                                                }
+                                                foreach (Object o in ((IList)d["O"][2].Valor))
+                                                {
+                                                    ((IList)d["O"][0].Valor).Add(o);
+                                                }
                                             } else {
                                                 SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString()); // Conflicto de tipo
                                             }
                                         } else if (Simbolo.UnitOf(d["O"][1].Tipo) == d["O"][2].Tipo) {
-                                            // Add
+                                            foreach (Object o in ((IList)d["O"][1].Valor))
+                                            {
+                                                ((IList)d["O"][0].Valor).Add(o);
+                                            }
+                                            ((IList)d["O"][0].Valor).Add(d["O"][2].Valor);
                                         } else {
                                             SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString()); // Conflicto de tipo
                                         }
                                     } else if (Simbolo.IsList(d["O"][2].Tipo)){
                                         AssignType(d, "O", 0, "O", 2);
-                                        if (Simbolo.IsList(d["O"][1].Tipo)){
-                                            if (d["O"][1].Tipo == d["O"][2].Tipo){
-                                                // Concatenate
-                                            } else {
-                                                SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
+                                        d["O"][0].Valor = new List<Object>();
+                                        if (Simbolo.UnitOf(d["O"][2].Tipo) == d["O"][1].Tipo) {
+                                            ((IList)d["O"][0].Valor).Add(d["O"][1].Valor);
+                                            foreach (Object o in ((IList)d["O"][2].Valor))
+                                            {
+                                                ((IList)d["O"][0].Valor).Add(o);
                                             }
-                                        } else if (Simbolo.UnitOf(d["O"][2].Tipo) == d["O"][1].Tipo) {
-                                            // Add
                                         } else {
                                             SetError(d, "O", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["O"][1].Tipo.ToString() + " - " + d["O"][2].Tipo.ToString());  // Conflicto de tipo
                                         }

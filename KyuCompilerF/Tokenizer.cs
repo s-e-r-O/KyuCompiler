@@ -207,6 +207,9 @@ namespace KyuCompilerF
                 tokens[i] = auxTokens[i];
             }
 
+            bool changeEncontrado = false;
+            int index = -1;
+
             for (int i = 0; i < auxTokens.Count; i++)
             {
                 if (EsCadena(tokens[i].lexema))
@@ -220,6 +223,11 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.KEYWORD;
                     tokens[i].descripcion = "Palabra Reservada";
+                    if (tokens[i].lexema == "change")
+                    {
+                        changeEncontrado = true;
+                        index = i;
+                    }
                 }
                 else if (EsSimboloA(tokens[i].lexema))
                 {
@@ -259,6 +267,12 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.SEPARATOR;
                     tokens[i].descripcion = "Salto de línea";
+                    if (changeEncontrado)
+                    {
+                        Array.Reverse(tokens, index+1, i-index-1);
+                        changeEncontrado = false;
+                        index = -1;
+                    }
                 }
                 else if (EsBoolean(tokens[i].lexema))
                 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,9 +43,22 @@ namespace KyuCompilerF.Models
             Nargs = -1;
         }
 
-        public string ToString()
+        public override string ToString()
         {
-            return "tipo: " + this.Tipo + "valor: " + this.Valor;
+            if (!IsList(Tipo))
+            {
+                return Valor + " (" + Tipo + ")";
+            }
+            string s = "";
+            IList list = (IList)Valor;
+            for (int i = 0; i < list.Count; i++) {
+                s += list[i].ToString();
+                if (i < list.Count - 1)
+                {
+                    s += ", ";
+                }
+            }
+            return "[" + s + "] (" + Tipo + ")";
         }
 
         public static bool IsList(SimboloTipo t)

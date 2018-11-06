@@ -265,7 +265,12 @@ namespace KyuCompilerF
 
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Cadena";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema.TrimStart('"').TrimEnd('"'));
+                    List<char> valor = new List<char>();
+                    foreach (char c in tokens[i].lexema.TrimStart('"').TrimEnd('"'))
+                    {
+                        valor.Add(c);
+                    }
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, valor);
                 }
                 else if (EsCaracter(tokens[i].lexema))
                 {

@@ -97,7 +97,7 @@ namespace KyuCompilerF.Models
             foreach (KeyValuePair<string, Simbolo> p in Simbolos) {
                 if (p.Value != null)
                 {
-                    s += p.Key + ": " + p.Value.Valor + " (" + p.Value.Tipo + ")\n";
+                    s += p.Key + ": " + p.Value +"\n";
                 }
             }
             return s;

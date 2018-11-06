@@ -34,7 +34,7 @@ namespace KyuCompilerF.Utils
                                 if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
                                 {
                                     if (d["K"][0].Tipo == SimboloTipo.FUNCION){
-                                        SetError(d, "D", 0);
+                                        SetError(d, "D", 0, "Llamar a una funcion no inicializada"); // Llamar a una funcion no inicializada
                                     } else
                                     {
                                         Assign(d, "i", 0, "K", 0);
@@ -46,13 +46,16 @@ namespace KyuCompilerF.Utils
                                     d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
                                     if (d["i"][0].Tipo == SimboloTipo.FUNCION)
                                     {
-                                        if (d["i"][0].Nargs != d["K"][0].Nargs)
+                                        if (d["K"][0].Tipo != SimboloTipo.FUNCION) {
+                                            SetError(d, "D", 0, "Redeclarar una funcion como variable"); // Redeclarar una funcion como variable
+                                        }
+                                        else if (d["i"][0].Nargs != d["K"][0].Nargs)
                                         {
-                                            SetError(d, "D", 0);
+                                            SetError(d, "D", 0, "Numero de argumentos no es el correcto"); // Numero de argumentos no es el correcto
                                         }
                                     } else
                                     {
-                                        SetError(d, "D", 0);
+                                        SetError(d, "D", 0, "Redeclarar una variable"); // Redeclarar una variable
                                     }
                                 }
                             }),
@@ -64,7 +67,7 @@ namespace KyuCompilerF.Utils
                                     TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                 } else
                                 {
-                                    SetError(d, "D", 0);
+                                    SetError(d, "D", 0, "Redeclarar una funcion"); // Redeclarar una funcion
                                 }
                             }),
                             new Produccion('K', "is B", d => Assign(d, "K", 0, "B", 0)),
@@ -75,8 +78,8 @@ namespace KyuCompilerF.Utils
                             new Produccion('B', "E", d => Assign(d, "B", 0, "E", 0)),
                             new Produccion('B', "[ X ]", d => d["B"][0].Tipo = Simbolo.ListOf(d["X"][0].Tipo)),
                             new Produccion('X', "E Z", (d) => {
-                                if (d["E"][0].Tipo != d["Z"][0].Tipo){
-                                    SetError(d, "X", 0);
+                                if (d["Z"][0].Tipo != SimboloTipo.EMPTY && d["E"][0].Tipo != d["Z"][0].Tipo){
+                                    SetError(d, "X", 0, "Conflicto de tipos"); // Listas de distinto tipo
                                 } else
                                 {
                                     AssignType(d, "X", 0, "E", 0);
@@ -85,7 +88,7 @@ namespace KyuCompilerF.Utils
                             new Produccion('X', Produccion.EPSILON, d => d["X"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('Z', ", E Z", (d) => {
                                 if (d["E"][0].Tipo != d["Z"][1].Tipo){
-                                    SetError(d, "Z", 0);
+                                    SetError(d, "Z", 0, "Confilcto de tipos"); // Listas de distinto tipo
                                 } else
                                 {
                                     AssignType(d, "Z", 0, "E", 0);
@@ -97,85 +100,78 @@ namespace KyuCompilerF.Utils
                                 if (TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id)){
                                     d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
                                     if (d["N"][0].Tipo != d["i"][0].Tipo) {
-                                        SetError(d, "A", 0);
+                                        SetError(d, "A", 0, "Conflicto de tipos"); // Tipos no concuerdan
                                     } else {
                                         d["i"][0].Valor = d["N"][0].Valor;
                                         TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
                                     }
                                 } else {
-                                    SetError(d, "A", 0);
+                                    SetError(d, "A", 0, "Variable no declarada"); // Uso de varibale no declarada
                                 }
                             }),
                             new Produccion('N', ", A E", d => Assign(d, "N", 0, "E", 0)),
                             new Produccion('N', "\n E", d => Assign(d, "N", 0, "E", 0)),
                             new Produccion('P', "i Q", (d) => {
-                                if (d["Q"][0].Tipo == SimboloTipo.ERROR)
-                                {
-                                    SetError(d, "P", 0);
-                                } else
-                                {
-                                    d["P"][0].Tipo = SimboloTipo.FUNCION;
-                                    d["P"][0].Nargs = d["Q"][0].Nargs + 1;
-                                }
+                                d["P"][0].Tipo = SimboloTipo.FUNCION;
+                                d["P"][0].Nargs = d["Q"][0].Nargs + 1;
                             }),
-                            new Produccion('P', Produccion.EPSILON, d => d["P"][0].Nargs = 0),
+                            new Produccion('P', Produccion.EPSILON, (d) => {
+                                d["P"][0].Nargs = 0;
+                                d["P"][0].Tipo = SimboloTipo.FUNCION;
+                            }),
                             new Produccion('Q', ", i Q", (d) => {
-                                if (d["Q"][1].Tipo == SimboloTipo.ERROR)
-                                {
-                                    SetError(d, "Q", 0);
-                                } else
-                                {
                                     d["Q"][0].Nargs = d["Q"][1].Nargs + 1;
-                                }
                             }),
-                            new Produccion('Q', Produccion.EPSILON, d => d["Q"][0].Nargs = 0),
+                            new Produccion('Q', Produccion.EPSILON, (d) => {
+                                d["Q"][0].Nargs = 0;
+                                d["Q"][0].Tipo = SimboloTipo.FUNCION;
+                            }),
                             new Produccion('R', "E U", (d) => {
-                                if (d["E"][0].Tipo == SimboloTipo.ERROR || d["U"][0].Tipo == SimboloTipo.ERROR)
-                                {
-                                    SetError(d, "R", 0);
-                                } else
-                                {
                                     d["R"][0].Tipo = SimboloTipo.FUNCION;
                                     d["R"][0].Nargs = d["U"][0].Nargs + 1;
-                                }
                             }),
-                            new Produccion('R', Produccion.EPSILON, d => d["R"][0].Nargs = 0),
+                            new Produccion('R', Produccion.EPSILON, (d) => {
+                                    d["R"][0].Tipo = SimboloTipo.FUNCION;
+                                    d["R"][0].Nargs = 0;
+                            }),
                             new Produccion('U', ", E U", (d) => {
-                                if (d["E"][0].Tipo == SimboloTipo.ERROR || d["U"][1].Tipo == SimboloTipo.ERROR)
-                                {
-                                    SetError(d, "U", 0);
-                                } else
-                                {
-                                    d["U"][0].Nargs = d["U"][1].Nargs + 1;
-                                }
+                                d["U"][0].Nargs = d["U"][1].Nargs + 1;
                             }),
                             new Produccion('U', Produccion.EPSILON, d => d["U"][0].Nargs = 0),
                             new Produccion('L', "forevery i in i \n M done", (d) => {
-                                if (Simbolo.IsList(d["i"][1].Tipo)){
-                                    d["i"][0].Tipo = Simbolo.UnitOf(d["i"][1].Tipo);
+                                if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id)){
+                                    if (TablaSimbolo.Tabla.IsInitialized(d["i"][1].Id)){
+                                        d["i"][1] = TablaSimbolo.Tabla.Get(d["i"][1].Id);
+                                        if (Simbolo.IsList(d["i"][1].Tipo)){
+                                            d["i"][0].Tipo = Simbolo.UnitOf(d["i"][1].Tipo);
+                                            TablaSimbolo.Tabla.Update(d["i"][0].Id, d["i"][0]);
+                                        } else
+                                        {
+                                            SetError(d, "L", 0, "No es lista"); // No es lista
+                                        }
+                                    } else
+                                    {
+                                        SetError(d, "L", 0, "Variable no declarada"); // Variable no declarada
+                                    }
                                 } else
                                 {
-                                    SetError(d, "L", 0);
+                                    SetError(d, "L", 0, "Nombre de variable ya utilizado"); // Nombre de variable ya utilizado 
                                 }
                             }),
-                            new Produccion('L', "forever \n M done", d => AssignType(d, "L", 0, "M", 0)),
+                            new Produccion('L', "forever \n M done"),
                             new Produccion('G', "given E \n M V", (d) => {
                                 if (d["E"][0].Tipo != SimboloTipo.BOOLEANO)
                                 {
-                                    SetError(d, "G", 0);
-                                }
-                                else if (d["E"][0].Tipo == SimboloTipo.ERROR || d["M"][0].Tipo == SimboloTipo.ERROR || d["V"][0].Tipo == SimboloTipo.ERROR)
-                                {
-                                    SetError(d, "G", 0);
-                                }
+                                    SetError(d, "G", 0, "Condicion no valida"); // Condicion no valida 
+                                }   
                             }),
-                            new Produccion('V', "done", d => d["V"][0].Tipo = SimboloTipo.EMPTY),
-                            new Produccion('V', "otherwise \n M done", d => AssignType(d, "V", 0, "M", 0)),
+                            new Produccion('V', "done"),
+                            new Produccion('V', "otherwise \n M done"),
                             new Produccion('E', "C W", (d) => {
                                 if (d["W"][0].Tipo == SimboloTipo.EMPTY)
                                 {
                                     Assign(d, "E", 0, "C", 0);
-                                } else if (d["C"][0].Tipo == SimboloTipo.BOOLEANO && d["W"][0].Tipo != SimboloTipo.ERROR)
+                                } else if (d["C"][0].Tipo == SimboloTipo.BOOLEANO && d["W"][0].Tipo != SimboloTipo.BOOLEANO)
                                 {
                                     AssignType(d, "E", 0, "C", 0);
                                     switch (d["W"][0].Operador)
@@ -189,13 +185,11 @@ namespace KyuCompilerF.Utils
                                     }
                                 } else
                                 {
-                                    SetError(d, "E", 0);
+                                    SetError(d, "E", 0, "Conflicto de tipos"); // Conflicto de tipos
                                 }
                             }),
                             new Produccion('W', "b E", (d) => {
-                                if (d["E"][0].Tipo != SimboloTipo.BOOLEANO) {
-                                    SetError(d, "W", 0);
-                                } else
+                                if (d["E"][0].Tipo == SimboloTipo.BOOLEANO)
                                 {
                                     Assign(d, "W", 0, "E", 0);
                                     d["W"][0].Operador = (string) d["b"][0].Valor;
@@ -206,11 +200,11 @@ namespace KyuCompilerF.Utils
                                 if (d["Y"][0].Tipo == SimboloTipo.EMPTY) {
                                     Assign(d, "C", 0, "O", 0);
                                 } else if (d["O"][0].Tipo != d["Y"][0].Tipo) {
-                                    SetError(d, "C", 0);
+                                    SetError(d, "C", 0, "Conflicto de tipos"); // Conflicto de tipos
                                 } else if (d["Y"][0].Operador == "==") {
                                     d["C"][0].Tipo = SimboloTipo.BOOLEANO;
                                     d["C"][0].Valor = d["O"][0].Valor == d["Y"][0].Valor;
-                                } else if (d["O"][0].Tipo == SimboloTipo.NUMERO || d["O"][0].Tipo == SimboloTipo.CHAR){
+                                } else if (d["O"][0].Tipo == SimboloTipo.NUMERO){
                                     d["C"][0].Tipo = SimboloTipo.BOOLEANO;
                                     switch(d["Y"][0].Operador){
                                         case ">":
@@ -228,16 +222,16 @@ namespace KyuCompilerF.Utils
                                     }
                                 } else
                                 {
-                                    SetError(d, "C", 0);
+                                    SetError(d, "C", 0, "Conflicto de tipos"); // Conflicto de tipos
                                 }
                             }),
                             new Produccion('C', "~ ( C )", (d) => {
                                 if (d["C"][1].Tipo != SimboloTipo.BOOLEANO) {
-                                    SetError(d, "C", 0);
+                                    SetError(d, "C", 0, "Conflicto de tipos"); // Conflicto de tipos
                                 } else
                                 {
-                                    d["C"][0].Valor = !(bool) d["C"][1].Valor;
                                     AssignType(d, "C", 0, "C", 1);
+                                    d["C"][0].Valor = !(bool) d["C"][1].Valor;
                                 }
                             }),
                             new Produccion('Y', "x O", (d) => {
@@ -275,12 +269,12 @@ namespace KyuCompilerF.Utils
                                             if (d["O"][1].Tipo == d["O"][2].Tipo){
                                                 // Concatenate
                                             } else {
-                                                SetError(d, "O", 0);
+                                                SetError(d, "O", 0, "Conflicto de tipos"); // Conflicto de tipo
                                             }
                                         } else if (Simbolo.UnitOf(d["O"][1].Tipo) == d["O"][2].Tipo) {
                                             // Add
                                         } else {
-                                            SetError(d, "O", 0);
+                                            SetError(d, "O", 0, "Conflicto de tipos"); // Conflicto de tipo
                                         }
                                     } else if (Simbolo.IsList(d["O"][2].Tipo)){
                                         AssignType(d, "O", 0, "O", 2);
@@ -288,24 +282,24 @@ namespace KyuCompilerF.Utils
                                             if (d["O"][1].Tipo == d["O"][2].Tipo){
                                                 // Concatenate
                                             } else {
-                                                SetError(d, "O", 0);
+                                                SetError(d, "O", 0, "Conflicto de tipos");  // Conflicto de tipo
                                             }
                                         } else if (Simbolo.UnitOf(d["O"][2].Tipo) == d["O"][1].Tipo) {
                                             // Add
                                         } else {
-                                            SetError(d, "O", 0);
+                                            SetError(d, "O", 0, "Conflicto de tipos");  // Conflicto de tipo
                                         }
                                     }
                                 } else
                                 {
-                                    SetError(d, "O", 0);
+                                    SetError(d, "O", 0, "Conflicto de tipos");  // Conflicto de tipo
                                 }
                             }),
                             new Produccion('O', "T", d => Assign(d, "O", 0, "T", 0)),
                             new Produccion('T', "i", (d) => {
-                                if (!TablaSimbolo.Tabla.IsInTable(d["i"][0].Id))
+                                if (!TablaSimbolo.Tabla.IsInitialized(d["i"][0].Id))
                                 {
-                                    SetError(d, "T", 0);
+                                    SetError(d, "T", 0, "Variable no declarada"); // Variable no declarada
                                 } else
                                 {
                                     d["i"][0] = TablaSimbolo.Tabla.Get(d["i"][0].Id);
@@ -331,9 +325,9 @@ namespace KyuCompilerF.Utils
             d[target][targetIndex].Tipo = d[origin][originIndex].Tipo;
         }
 
-        static void SetError(Dictionary<string, List<Simbolo>> d, string target, int targetIndex)
+        static void SetError(Dictionary<string, List<Simbolo>> d, string target, int targetIndex, string desc)
         {
-            Console.WriteLine("ERROR: " + target);
+            Console.WriteLine("ERROR: " + desc);
             d[target][targetIndex].Tipo = SimboloTipo.ERROR;
         }
     }

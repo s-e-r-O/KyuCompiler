@@ -1,8 +1,7 @@
 kyu#
 {
-    myVar is 4
-	myVar2 is "myVar"
-
-	myVar3 is * myVar, + 50, 1
-			
+	function f a,b is
+		x is 7
+	done
+	f 1,2,3
 }

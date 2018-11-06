@@ -36,6 +36,13 @@ namespace KyuCompilerF
             return match.Success;
         }
 
+        public bool EsCaracter(string cadena)
+        {
+            string patron = "^'[^\\\\']{1}'$|^'\\\\n'$|^'\\\\\\\\'$|^'\\\\\"'$|^'\\\\''$";
+            Match match = Regex.Match(cadena, patron);
+            return match.Success;
+        }
+
         public bool EsBoolean(string cadena)
         {
             string patron = "^true$|^false$";
@@ -81,17 +88,10 @@ namespace KyuCompilerF
             return match.Success;
         }
 
-        public bool EsComilla(string cadena)
-        {
-            string patron = "\"|'";
-            Match match = Regex.Match(cadena, patron);
-            return match.Success;
-        }
-
         public bool EsCadena(string cadena)
         {
 
-            string patron = "^\"[\\w|\\s|\\W]*\"$";
+            string patron = "^\"[\\w|\\s|\\W|\\D]*\"$";
             Match match = Regex.Match(cadena, patron);
             return match.Success;
         }
@@ -124,70 +124,114 @@ namespace KyuCompilerF
                         caracteres[j] = codigo[i].Substring(j, 1);
                     }
 
-                    //no quitar el -1
-                    for (int j = 0; j < caracteres.Length - 1; j++)
+                //no quitar el -1
+                for (int j = 0; j < caracteres.Length - 1; j++)
+                {
+                    if (!caracteres[j].Equals(" ") && !caracteres[j].Equals("\t") && !EsSimbolo(caracteres[j]))
                     {
-                        if (!caracteres[j].Equals(" ") && !caracteres[j].Equals("\t") && !EsSimbolo(caracteres[j]))
+                        aux += caracteres[j];
+                    }//si es una cadena
+                    else if (caracteres[j].Equals("\""))
+                    {
+                        aux = caracteres[j];
+                        j++;
+                        while (j < caracteres.Length - 1 && !caracteres[j].Equals("\""))
                         {
-                            aux += caracteres[j];
-                        }//si es una cadena
-                        else if (EsComilla(caracteres[j]))
-                        {
-                            aux = caracteres[j];
-                            j++;
-                            while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
+                            if (caracteres[j].Equals("\\") && (caracteres[j + 1].Equals("t") || caracteres[j + 1].Equals("n") || caracteres[j + 1].Equals("\"") || caracteres[j + 1].Equals("\\")))
+                            {
+                                aux += caracteres[j] + caracteres[j + 1];
+                                j += 2;
+                            }
+                            else if(!caracteres[j].Equals("\\"))
                             {
                                 aux += caracteres[j];
-                                j++;
-                            }
-                            aux += caracteres[j];
-                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
-                            aux = "";
-                        }
-                        else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
-                        {
-                            aux = caracteres[j];
-                            j++;
-                            while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
-                            {
-                                aux += caracteres[j];
-                                j++;
-                            }
-                            aux += caracteres[j];
-                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
-                            aux = "";
-                        }
-                        else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
-                        {
-                            if (!aux.Equals(""))
-                            {
-                                auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
-                            }
-                            aux = "";
-                        }
-                        else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
-                        {
-                            if (!EsSimboloA(caracteres[j]))
-                            {
-                                auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
                                 j++;
                             }
                             else
                             {
-                                auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                                break;
                             }
-                            aux = "";
                         }
-                        else if (EsSimbolo(caracteres[j]))
+                        if (caracteres[j].Equals("\\"))
                         {
-                            if (!aux.Equals(""))
-                            {
-                                auxTokens.Add(new Token(aux, i, j));
-                            }
-                            auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                            break;
+                        }
+                        aux += caracteres[j];
+                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                        aux = "";
+                    }
+                    else if (caracteres[j].Equals("'"))
+                    {
+                        aux = caracteres[j];
+                        j++;
+                        if (caracteres[j].Equals("\\") && (caracteres[j + 1].Equals("t") || caracteres[j + 1].Equals("n") || caracteres[j + 1].Equals("'") || caracteres[j + 1].Equals("\\")))
+                        {
+                            aux += caracteres[j] + caracteres[j + 1];
+                            j += 2;
+                        }
+                        else if (!caracteres[j].Equals("\\"))
+                        {
+                            aux += caracteres[j];
+                            j++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        if (caracteres[j].Equals("'"))
+                        {
+                            aux += caracteres[j];
+                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
                             aux = "";
+                        } else
+                        {
+                            break;
                         }
                     }
+                    else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
+                    {
+                        aux = caracteres[j];
+                        j++;
+                        while (j < caracteres.Length - 1 && (!caracteres[j].Equals("\t") || !caracteres[j].Equals(" ")))
+                        {
+                            aux += caracteres[j];
+                            j++;
+                        }
+                        aux += caracteres[j];
+                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                        aux = "";
+                    }
+                    else if (caracteres[j].Equals("\t") || caracteres[j].Equals(" "))
+                    {
+                        if (!aux.Equals(""))
+                        {
+                            auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
+                        }
+                        aux = "";
+                    }
+                    else if (EsSimbolo(caracteres[j]) && caracteres[j + 1].Equals("="))
+                    {
+                        if (!EsSimboloA(caracteres[j]))
+                        {
+                            auxTokens.Add(new Token(caracteres[j] + caracteres[j + 1], i + 1, j + 1));
+                            j++;
+                        }
+                        else
+                        {
+                            auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                        }
+                        aux = "";
+                    }
+                    else if (EsSimbolo(caracteres[j]))
+                    {
+                        if (!aux.Equals(""))
+                        {
+                            auxTokens.Add(new Token(aux, i, j));
+                        }
+                        auxTokens.Add(new Token(caracteres[j], i + 1, j + 1));
+                        aux = "";
+                    }
+                }
 
                     if (!aux.Equals("") && !aux.Equals(" "))
                     {
@@ -220,7 +264,13 @@ namespace KyuCompilerF
 
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Cadena";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema);
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema.TrimStart('"').TrimEnd('"'));
+                }
+                else if (EsCaracter(tokens[i].lexema))
+                {
+                    tokens[i].token = Token.TokenType.VALUE;
+                    tokens[i].descripcion = "Caracter";
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.CHAR, char.Parse(tokens[i].lexema.TrimStart('\'').TrimEnd('\'').Replace("\\n", "\n").Replace("\\\\", "\\")));
                 }
                 else if (EsPalabraReservada(tokens[i].lexema))
                 {

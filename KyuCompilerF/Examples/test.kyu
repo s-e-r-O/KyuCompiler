@@ -1,4 +1,6 @@
 kyu#
 {
 	a is 5
+	b is '\n'
+	c is '\\'
 }

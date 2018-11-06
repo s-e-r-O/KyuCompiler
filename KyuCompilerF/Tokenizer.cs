@@ -13,6 +13,7 @@ namespace KyuCompilerF
     {
         public Token[] Analizar(string[] codigo)
         {
+            TablaSimbolo.Tabla.Clear();
             Token[] tokens = this.Reconocer(codigo);
 
             return tokens;
@@ -291,7 +292,7 @@ namespace KyuCompilerF
                 {
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Número";
-                    tokens[i].Simbolo = new Simbolo(SimboloTipo.NUMERO, decimal.Parse(tokens[i].lexema));
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.NUMERO, decimal.Parse(tokens[i].lexema.Replace("~", "-")));
                 }
                 else if (EsOperadorA(tokens[i].lexema))
                 {

@@ -197,8 +197,22 @@ namespace CompilerUI
                 List<Token> tokens = t.Analizar(file).ToList();
                 Parser p = new Parser();
                 p.CalcularLL1(KyuValues.Gramatica);
-                p.Evaluar(tokens);
-                OutputLabel.Text = "Compiled Successfully!";
+                Nodo raiz = p.Evaluar(tokens);
+                SemanticAnalyzer s = new SemanticAnalyzer();
+                s.Evaluar(raiz);
+                OutputLabel.Text = "Compiled Successfully!\n" + TablaSimbolo.Tabla;
+            }
+            catch (AggregateException except)
+            {
+                tabPage2.Text = "(1) Error List";
+                OutputLabel.Text = "Couldn't compile successfully.\nError thrown at " + pathSelectedFile + "\n";
+                ErrorLabel.ForeColor = Color.Red;
+                string err = "";
+                except.Handle(ex => {
+                    err += ex + "\n";
+                    return true;
+                });
+                ErrorLabel.Text = err;
             }
             catch (Exception excep)
             {

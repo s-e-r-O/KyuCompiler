@@ -21,6 +21,11 @@ namespace KyuCompilerF.Models
             }
         }
 
+        public void Clear()
+        {
+            Simbolos = new Dictionary<string, Simbolo>();
+        }
+
         private Dictionary<string, Simbolo> Simbolos { get; set; }
         
         private TablaSimbolo()

@@ -88,7 +88,7 @@ namespace KyuCompilerF.Utils
                             }),
                             new Produccion('X', Produccion.EPSILON, d => d["X"][0].Tipo = SimboloTipo.EMPTY),
                             new Produccion('Z', ", E Z", (d) => {
-                                if (d["E"][0].Tipo != d["Z"][1].Tipo){
+                                if (d["Z"][1].Tipo != SimboloTipo.EMPTY && d["E"][0].Tipo != d["Z"][1].Tipo){
                                     SetError(d, "Z", 0, KyuSemanticException.Type.CONFLICTING_TYPES, d["E"][0].Tipo.ToString() + " - " + d["Z"][1].Tipo.ToString()); // Listas de distinto tipo
                                 } else
                                 {

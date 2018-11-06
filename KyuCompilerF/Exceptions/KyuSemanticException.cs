@@ -39,7 +39,7 @@ namespace KyuCompilerF.Exceptions
                     s += t[0].ToString().ToUpper() + t.Substring(1);
                 }
             }
-            return String.Format("Kyu{0}Exception: at line {1} ({2})", s, linea, descripcion);
+            return String.Format("Kyu{0}Exception: at line {1} ({2})", s, Linea, descripcion);
         }
     }
 }

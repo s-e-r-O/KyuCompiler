@@ -20,13 +20,13 @@ namespace KyuCompilerF.Exceptions
 
         Type tipo;
         string descripcion;
-        int linea;
+        public int Linea { get; set; }
         
         public KyuSemanticException(Type tipo, string descripcion)
         {
             this.tipo = tipo;
             this.descripcion = descripcion;
-            this.linea = 0;
+            this.Linea = -1;
         }
 
         public override string ToString()

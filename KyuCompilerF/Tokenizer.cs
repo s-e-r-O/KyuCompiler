@@ -236,15 +236,15 @@ namespace KyuCompilerF
 
                     if (!aux.Equals("") && !aux.Equals(" "))
                     {
-                        auxTokens.Add(new Token(aux, i, 0));
+                        auxTokens.Add(new Token(aux, i+1, 1));
                         aux = "";
                     }
 
-                    auxTokens.Add(new Token("\n", i, caracteres.Length));
+                    auxTokens.Add(new Token("\n", i+1, caracteres.Length));
 
                     if (i >= codigo.Length - 1 && !aux.Equals(" ") && !aux.Equals(""))
                     {
-                        auxTokens.Add(new Token(aux, i, codigo.Length - 1));
+                        auxTokens.Add(new Token(aux, i+1, codigo.Length - 1));
                     }
                 }
             }

@@ -38,7 +38,7 @@ namespace KyuCompilerF
 
         public bool EsCaracter(string cadena)
         {
-            string patron = "^'[^\"\\\\']{1}'$|^'\\\\n'$|^'\\\\\\\\'$|^'\\\\\"'$|^'\\\\''$";
+            string patron = "^'[^\\\\']{1}'$|^'\\\\n'$|^'\\\\\\\\'$|^'\\\\\"'$|^'\\\\''$";
             Match match = Regex.Match(cadena, patron);
             return match.Success;
         }
@@ -88,13 +88,6 @@ namespace KyuCompilerF
             return match.Success;
         }
 
-        public bool EsComilla(string cadena)
-        {
-            string patron = "\"|'";
-            Match match = Regex.Match(cadena, patron);
-            return match.Success;
-        }
-
         public bool EsCadena(string cadena)
         {
 
@@ -136,17 +129,55 @@ namespace KyuCompilerF
                     {
                         aux += caracteres[j];
                     }//si es una cadena
-                    else if (EsComilla(caracteres[j]))
+                    else if (caracteres[j].Equals("\""))
                     {
                         aux = caracteres[j];
                         j++;
-                        while (j < caracteres.Length - 1 && !EsComilla(caracteres[j]))
+                        while (j < caracteres.Length - 1 && !caracteres[j].Equals("\""))
+                        {
+                            if (caracteres[j].Equals("\\") && (caracteres[j + 1].Equals("t") || caracteres[j + 1].Equals("n") || caracteres[j + 1].Equals("\"") || caracteres[j + 1].Equals("\\")))
+                            {
+                                aux += caracteres[j] + caracteres[j + 1];
+                                j += 2;
+                            }
+                            else if(!caracteres[j].Equals("\\"))
+                            {
+                                aux += caracteres[j];
+                                j++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        if (caracteres[j].Equals("\\"))
+                        {
+                            break;
+                        }
+                        aux += caracteres[j];
+                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                        aux = "";
+                    }
+                    else if (caracteres[j].Equals("'"))
+                    {
+                        aux = caracteres[j];
+                        j++;
+                        if (caracteres[j].Equals("\\") && (caracteres[j + 1].Equals("t") || caracteres[j + 1].Equals("n") || caracteres[j + 1].Equals("'") || caracteres[j + 1].Equals("\\")))
+                        {
+                            aux += caracteres[j] + caracteres[j + 1];
+                            j += 2;
+                        }
+                        else if (!caracteres[j].Equals("\\"))
                         {
                             aux += caracteres[j];
                             j++;
                         }
+                        else
+                        {
+                            break;
+                        }
                         aux += caracteres[j];
-                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 2));
+                        auxTokens.Add(new Token(aux, i + 1, j - aux.Length + 1));
                         aux = "";
                     }
                     else if (caracteres[j].Equals("~") && EsNumero(caracteres[j + 1]))
@@ -222,6 +253,12 @@ namespace KyuCompilerF
                     tokens[i].token = Token.TokenType.VALUE;
                     tokens[i].descripcion = "Cadena";
                     tokens[i].Simbolo = new Simbolo(SimboloTipo.LIST_CHAR, tokens[i].lexema);
+                }
+                if (EsCaracter(tokens[i].lexema))
+                {
+                    tokens[i].token = Token.TokenType.VALUE;
+                    tokens[i].descripcion = "Caracter";
+                    tokens[i].Simbolo = new Simbolo(SimboloTipo.CHAR, tokens[i].lexema);
                 }
                 else if (EsPalabraReservada(tokens[i].lexema))
                 {

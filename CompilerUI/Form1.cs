@@ -314,6 +314,7 @@ namespace CompilerUI
             keywordColor = Color.MediumBlue;
             cadenaColor = Color.DarkRed;
             wordsColor = Color.Black;
+            OutputLabel.ForeColor = Color.Black;
             syntaxHighLight();
         }
 

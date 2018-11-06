@@ -33,6 +33,11 @@
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.interfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.darkNigthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.darkNigthToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.lightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exceptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,6 +61,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.windowToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -94,6 +100,45 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
+            // windowToolStripMenuItem
+            // 
+            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.interfaceToolStripMenuItem});
+            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.windowToolStripMenuItem.Text = "Tools";
+            // 
+            // interfaceToolStripMenuItem
+            // 
+            this.interfaceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.darkNigthToolStripMenuItem});
+            this.interfaceToolStripMenuItem.Name = "interfaceToolStripMenuItem";
+            this.interfaceToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.interfaceToolStripMenuItem.Text = "Options";
+            // 
+            // darkNigthToolStripMenuItem
+            // 
+            this.darkNigthToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.darkNigthToolStripMenuItem1,
+            this.lightToolStripMenuItem});
+            this.darkNigthToolStripMenuItem.Name = "darkNigthToolStripMenuItem";
+            this.darkNigthToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.darkNigthToolStripMenuItem.Text = "Environment";
+            // 
+            // darkNigthToolStripMenuItem1
+            // 
+            this.darkNigthToolStripMenuItem1.Name = "darkNigthToolStripMenuItem1";
+            this.darkNigthToolStripMenuItem1.Size = new System.Drawing.Size(129, 22);
+            this.darkNigthToolStripMenuItem1.Text = "Dark nigth";
+            this.darkNigthToolStripMenuItem1.Click += new System.EventHandler(this.darkNigthToolStripMenuItem1_Click);
+            // 
+            // lightToolStripMenuItem
+            // 
+            this.lightToolStripMenuItem.Name = "lightToolStripMenuItem";
+            this.lightToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.lightToolStripMenuItem.Text = "Light";
+            this.lightToolStripMenuItem.Click += new System.EventHandler(this.lightToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -131,6 +176,8 @@
             this.TextEditorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.TextEditorTextBox.BackColor = System.Drawing.Color.White;
+            this.TextEditorTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.TextEditorTextBox.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TextEditorTextBox.Location = new System.Drawing.Point(54, 39);
             this.TextEditorTextBox.Name = "TextEditorTextBox";
@@ -138,6 +185,8 @@
             this.TextEditorTextBox.TabIndex = 7;
             this.TextEditorTextBox.Text = "";
             this.TextEditorTextBox.WordWrap = false;
+            this.TextEditorTextBox.ReadOnlyChanged += new System.EventHandler(this.TextEditorTextBox_ReadOnlyChanged);
+            this.TextEditorTextBox.CursorChanged += new System.EventHandler(this.TextEditorTextBox_CursorChanged);
             this.TextEditorTextBox.TextChanged += new System.EventHandler(this.TextEditorTextBox_TextChanged);
             this.TextEditorTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextEditorTextBox_KeyDown);
             // 
@@ -145,6 +194,7 @@
             // 
             this.LineNumberTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.LineNumberTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.LineNumberTextBox.Cursor = System.Windows.Forms.Cursors.PanNE;
             this.LineNumberTextBox.ForeColor = System.Drawing.Color.DodgerBlue;
             this.LineNumberTextBox.Location = new System.Drawing.Point(13, 39);
@@ -153,6 +203,7 @@
             this.LineNumberTextBox.Size = new System.Drawing.Size(40, 385);
             this.LineNumberTextBox.TabIndex = 8;
             this.LineNumberTextBox.Text = "";
+            this.LineNumberTextBox.ReadOnlyChanged += new System.EventHandler(this.LineNumberTextBox_ReadOnlyChanged);
             // 
             // StopButton
             // 
@@ -239,6 +290,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1053, 626);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.StopButton);
@@ -282,6 +334,11 @@
         private System.Windows.Forms.ToolStripMenuItem exceptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem codeExampleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem interfaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem darkNigthToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem darkNigthToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem lightToolStripMenuItem;
     }
 }
 

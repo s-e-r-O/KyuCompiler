@@ -18,10 +18,16 @@ namespace CompilerUI
     public partial class Form1 : Form
     {
         int countSaving = 0;
+        int environmentColor = 0;
         string pathSelectedFile = "";
         string fileName = "";
         string[] keywordsList = new string[] { "change", "changed", "given", "otherwise", "done", "return", "forevery", "forever", "done", "in", "stop", "kyu#", "is", "function" };
 
+        Color keywordColor = Color.MediumBlue;
+        Color cadenaColor = Color.DarkRed;
+        Color wordsColor = Color.Black;
+
+        Tokenizer tokenizer = new Tokenizer();
 
         public Form1()
         {
@@ -32,7 +38,8 @@ namespace CompilerUI
         private void Form1_Load(object sender, EventArgs e)
         {
             StopButton.Visible = false;
-            LineNumberTextBox.Enabled = false;
+            //LineNumberTextBox.Enabled = false;
+            LineNumberTextBox.ReadOnly = true;
             LineNumberTextBox.Font = TextEditorTextBox.Font;
         }
 
@@ -101,27 +108,51 @@ namespace CompilerUI
         private void TextEditorTextBox_TextChanged(object sender, EventArgs e)
         {
             AddLineNumeration();
-            highligthKeywords(Color.DarkTurquoise, 0);
+            //highligthKeywords(Color.DarkTurquoise, 0);
+            syntaxHighLight();
         }
 
-        private void highligthKeywords(Color color, int startIndex)
+        private void highligthKeywords(string word, Color color, int startIndex)
         {
-            string word;
+            /*string word;
             for (int i = 0; i < keywordsList.Length; i++)
             {
                 word = keywordsList[i];
                 if (this.TextEditorTextBox.Text.Contains(word))
-                {
+                {*/
                     int index = -1;
                     int selectStart = this.TextEditorTextBox.SelectionStart;
 
                     while ((index = this.TextEditorTextBox.Text.IndexOf(word, (index + 1))) != -1)
                     {
+                        //MessageBox.Show("La comilla: " + tokenizer.EsComilla(word));
+                        //MessageBox.Show("La cadena: " + tokenizer.EsCadena(word));
                         this.TextEditorTextBox.Select((index + startIndex), word.Length);
                         this.TextEditorTextBox.SelectionColor = color;
                         this.TextEditorTextBox.Select(selectStart, 0);
                         this.TextEditorTextBox.SelectionColor = Color.Black;
                     }
+                //}
+            //}
+        }
+
+        private void syntaxHighLight()
+        {
+            string texto = TextEditorTextBox.Text.Replace("\t", " ");
+            string[] words = texto.Split(new char[] {' ', '\n' } , StringSplitOptions.RemoveEmptyEntries);
+            foreach (string word in words)
+            {
+                if (tokenizer.EsComilla(word) || tokenizer.EsCadena(word))
+                {
+                    highligthKeywords(word, cadenaColor, 0);
+                }
+                else if (tokenizer.EsPalabraReservada(word))
+                {
+                    highligthKeywords(word, keywordColor, 0);
+                }
+                else
+                {
+                    highligthKeywords(word, wordsColor, 0);
                 }
             }
         }
@@ -176,7 +207,8 @@ namespace CompilerUI
         private void PlayButton_Click(object sender, EventArgs e)
         {
             StopButton.Visible = true;
-            TextEditorTextBox.Enabled = false;
+            TextEditorTextBox.ReadOnly = true;
+            //TextEditorTextBox.Enabled = false;
             PlayButton.Enabled = false;
 
             if (countSaving == 0)
@@ -213,7 +245,8 @@ namespace CompilerUI
         {
             StopButton.Visible = false;
             PlayButton.Enabled = true;
-            TextEditorTextBox.Enabled = true;
+            TextEditorTextBox.ReadOnly = false;
+            //TextEditorTextBox.Enabled = true;
             OutputLabel.Text = "";
             ErrorLabel.Text = "";
             tabPage2.Text = "Error List";
@@ -229,6 +262,69 @@ namespace CompilerUI
             {
                 string text = TextEditorTextBox.Text;
                 System.IO.File.WriteAllText(pathSelectedFile, text);
+            }
+        }
+
+        private void themeColor(Color colorForm, Color color)
+        {
+            this.BackColor = colorForm;
+
+            TextEditorTextBox.BackColor = color;
+            LineNumberTextBox.BackColor = color;
+            tabPage1.BackColor = color;
+            tabPage2.BackColor = color;
+        }
+
+        private void TextEditorTextBox_CursorChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void darkNigthToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            environmentColor = 2;
+
+            themeColor(Color.Black, Color.FromArgb(0, 0, 64));
+            keywordColor = Color.DarkTurquoise;
+            cadenaColor = Color.DarkOrange;
+            wordsColor = Color.RosyBrown;
+            OutputLabel.ForeColor = Color.RosyBrown;
+            syntaxHighLight();
+        }
+
+        private void lightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            environmentColor = 1;
+            
+            themeColor(Color.WhiteSmoke, Color.White);
+            keywordColor = Color.MediumBlue;
+            cadenaColor = Color.DarkRed;
+            wordsColor = Color.Black;
+            syntaxHighLight();
+        }
+
+        private void LineNumberTextBox_ReadOnlyChanged(object sender, EventArgs e)
+        {
+            if (environmentColor == 2)
+            {
+                LineNumberTextBox.BackColor = Color.FromArgb(0, 0, 64);
+            }
+            else
+            {
+                LineNumberTextBox.BackColor = Color.White;
+            }
+            
+        }
+
+        private void TextEditorTextBox_ReadOnlyChanged(object sender, EventArgs e)
+        {
+            if (environmentColor == 2)
+            {
+                TextEditorTextBox.BackColor = Color.FromArgb(0, 0, 64);
+            }
+            else
+            {
+                TextEditorTextBox.BackColor = Color.White;
             }
         }
     }

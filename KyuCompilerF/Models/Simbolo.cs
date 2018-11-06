@@ -15,6 +15,7 @@ namespace KyuCompilerF.Models
         LIST_NUMERO,
         LIST_BOOLEANO,
         LIST_CHAR,
+        LIST_EMPTY,
         OPERADOR,
         EMPTY,
         ERROR,
@@ -63,7 +64,7 @@ namespace KyuCompilerF.Models
 
         public static bool IsList(SimboloTipo t)
         {
-            return t == SimboloTipo.LIST_BOOLEANO || t == SimboloTipo.LIST_CHAR || t == SimboloTipo.LIST_NUMERO;
+            return t == SimboloTipo.LIST_BOOLEANO || t == SimboloTipo.LIST_CHAR || t == SimboloTipo.LIST_NUMERO || t == SimboloTipo.LIST_EMPTY;
         }
 
         public static SimboloTipo ListOf(SimboloTipo t)
@@ -76,6 +77,8 @@ namespace KyuCompilerF.Models
                     return SimboloTipo.LIST_CHAR;
                 case SimboloTipo.BOOLEANO:
                     return SimboloTipo.LIST_BOOLEANO;
+                case SimboloTipo.EMPTY:
+                    return SimboloTipo.LIST_EMPTY;
             }
             return SimboloTipo.ERROR;
         }
@@ -90,8 +93,15 @@ namespace KyuCompilerF.Models
                     return SimboloTipo.CHAR;
                 case SimboloTipo.LIST_BOOLEANO:
                     return SimboloTipo.BOOLEANO;
+                case SimboloTipo.LIST_EMPTY:
+                    return SimboloTipo.EMPTY;
             }
             return SimboloTipo.ERROR;
+        }
+
+        public static bool isEmptyList(SimboloTipo t)
+        {
+            return t == SimboloTipo.LIST_EMPTY;
         }
 
     }

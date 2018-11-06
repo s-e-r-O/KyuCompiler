@@ -142,7 +142,7 @@ namespace CompilerUI
             string[] words = texto.Split(new char[] {' ', '\n' } , StringSplitOptions.RemoveEmptyEntries);
             foreach (string word in words)
             {
-                if (tokenizer.EsComilla(word) || tokenizer.EsCadena(word))
+                if (tokenizer.EsCadena(word))
                 {
                     highligthKeywords(word, cadenaColor, 0);
                 }
